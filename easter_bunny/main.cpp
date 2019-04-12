@@ -35,23 +35,6 @@ void circle_func(){
 	}
 }
 
-void egg(){
-	raioX=40;
-	raioY=50;
-	glColor3f(0.19, 0.05, 0.05);
-	glBegin(GL_POLYGON);
-	for (int i = 0; i < circ_pnt; i++) {
-		if(i<200){
-			raioY=70;
-		}
-		else{
-			raioY=45;
-		}
-		ang = (2 * PI * i) / circ_pnt;
-		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);	}
-	glEnd();
-}
-
 void draw_body() {
 	raioX = 80.0f;
 	raioY = 100.0f;
@@ -386,6 +369,42 @@ void draw_ground(){
 		glVertex2f(-500,-300);
 	glEnd();
 
+	glPopMatrix();
+}
+
+void tie(){
+	glBegin(GL_TRIANGLES);
+		glColor3f(0.8,0,0);
+		glVertex2d(0,0);
+		glColor3f(0.5,0,0);
+		glVertex2d(-25,45);
+		glVertex2d(25,45);
+	glEnd();
+}
+
+void egg(){
+	raioX=40;
+	raioY=50;
+	glColor3f(0.19, 0.05, 0.05);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < circ_pnt; i++) {
+		if(i<200){
+			raioY=70;
+		}
+		else{
+			raioY=45;
+		}
+		ang = (2 * PI * i) / circ_pnt;
+		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);	}
+	glEnd();
+
+	glPushMatrix();
+	glRotatef(90,0,0,1);
+	tie();
+	glPopMatrix();
+	glPushMatrix();
+	glRotatef(-90,0,0,1);
+	tie();
 	glPopMatrix();
 }
 
