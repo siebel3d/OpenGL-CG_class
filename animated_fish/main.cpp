@@ -63,44 +63,44 @@ void keyboard(unsigned char key, int x, int y){
 
 void fish(){
 	glColor3f(0,1,0);
-
+	//upper part
 	glBegin(GL_POLYGON);
-		glVertex2f(50, 50);
-		glVertex2f(100, 75);
-		glVertex2f(150, 80);
-		glVertex2f(140, 110);
-		glVertex2f(90, 90);
+		glVertex2f(5, 5);
+		glVertex2f(10, 7.5);
+		glVertex2f(15, 8);
+		glVertex2f(14, 11);
+		glVertex2f(9, 9);
 	glEnd();
-
+	//lower part
 	glBegin(GL_POLYGON);
-		glVertex2f(150, -80);
-		glVertex2f(130, -95);
-		glVertex2f(90, -90);
-		glVertex2f(100, -75);
+		glVertex2f(15, -8);
+		glVertex2f(13, -9.5);
+		glVertex2f(9, -9);
+		glVertex2f(10, -7.5);
 	glEnd();
 
 	glColor3f(1,0,0);
-
+	//tail
 	glBegin(GL_POLYGON);
 		glVertex2f(0, 0);
-		glVertex2f(-100, 100);
-		glVertex2f(-50, 0);
-		glVertex2f(-100, -100);
+		glVertex2f(-10, 10);
+		glVertex2f(-5, 0);
+		glVertex2f(-10, -10);
 	glEnd();
-
+	//body
 	glBegin(GL_POLYGON);		
 		glVertex2f(0, 0);
-		glVertex2f(50, 50);
-		glVertex2f(100, 75);
-		glVertex2f(150, 80);
-		glVertex2f(200, 60);
-		glVertex2f(230, 30);
-		glVertex2f(240, 0);
-		glVertex2f(230, -30);
-		glVertex2f(200, -60);
-		glVertex2f(150, -80);
-		glVertex2f(100, -75);
-		glVertex2f(50, -50);
+		glVertex2f(5, 5);
+		glVertex2f(10, 7.5);
+		glVertex2f(15, 8);
+		glVertex2f(20, 6);
+		glVertex2f(23, 3);
+		glVertex2f(24, 0);
+		glVertex2f(23, -3);
+		glVertex2f(20, -6);
+		glVertex2f(15, -8);
+		glVertex2f(10, -7.5);
+		glVertex2f(5, -5);
 	glEnd();
 }
 
