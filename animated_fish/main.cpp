@@ -4,8 +4,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define windowH 400
-#define windowW 600
+#define PI 3.1315926535898
+
+#define windowH 900
+#define windowW 1600
 
 //translation variables
 float tx=0.0;
@@ -22,7 +24,7 @@ void anim(int value);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowSize(windowW, windowH);
 	glutInitWindowPosition(100,100);
 	glutCreateWindow("Animation Test");
@@ -30,7 +32,7 @@ int main(int argc, char** argv){
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
 	glutKeyboardFunc(&keyboard);
-	glutTimerFunc(1500,anim,1);
+	glutTimerFunc(0,anim,1);
 	glutMainLoop();
 
 	return(0);
@@ -51,7 +53,7 @@ void anim(int value){
 	printf("\n TX %.2f TY %.2f", tx, ty);
 
 	glutPostRedisplay();
-	glutTimerFunc(150,anim,1);
+	glutTimerFunc(50,anim,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -62,34 +64,41 @@ void keyboard(unsigned char key, int x, int y){
 }
 
 void fish(){
-	glColor3f(0,1,0);
+	glColor3ub(252,146,47);
 	//upper part
 	glBegin(GL_POLYGON);
 		glVertex2f(5, 5);
-		glVertex2f(10, 7.5);
+		glColor3ub(252,146,47);
+		glVertex2f(10, 7.5);		
 		glVertex2f(15, 8);
+		glColor3ub(255,255,255);
 		glVertex2f(14, 11);
 		glVertex2f(9, 9);
 	glEnd();
 	//lower part
+	glColor3ub(252,146,47);
 	glBegin(GL_POLYGON);
 		glVertex2f(15, -8);
+		glColor3ub(255,255,255);
 		glVertex2f(13, -9.5);
 		glVertex2f(9, -9);
+		glColor3ub(252,146,47);
 		glVertex2f(10, -7.5);
 	glEnd();
-
-	glColor3f(1,0,0);
 	//tail
 	glBegin(GL_POLYGON);
+		glColor3ub(255,255,255);
 		glVertex2f(0, 0);
+		glColor3ub(252,146,47);
 		glVertex2f(-10, 10);
 		glVertex2f(-5, 0);
 		glVertex2f(-10, -10);
 	glEnd();
 	//body
-	glBegin(GL_POLYGON);		
+	glBegin(GL_POLYGON);
+		glColor3ub(255,255,255);
 		glVertex2f(0, 0);
+		glColor3ub(252,146,47);
 		glVertex2f(5, 5);
 		glVertex2f(10, 7.5);
 		glVertex2f(15, 8);
@@ -104,12 +113,76 @@ void fish(){
 	glEnd();
 }
 
+void aquarium(){
+	glColor3ub(255,0,0);
+
+	GLfloat circ_pnt = 500;
+	GLfloat ang, raioX = 100.0f, raioY = 80.0f;
+
+	glColor3ub(0,0,0);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < circ_pnt; i++) {
+		if(i<=250){
+			raioY=90;
+		}else if(i>250){
+			raioY=70;
+		}
+
+		ang = (2 * PI * i) / circ_pnt;
+		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
+		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
+	}
+	glEnd();
+
+	glColor4ub(70,70,255, 0);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < circ_pnt; i++) {
+		if(i<=250){
+			raioY=90;
+		}else if(i>250){
+			raioY=70;
+		}
+
+		ang = (2 * PI * i) / circ_pnt;
+		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
+		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
+	}
+	glEnd();
+
+	glPushMatrix();
+	glTranslatef(0,85,0);
+	raioX=30;
+	raioY=10;
+
+	glColor3ub(0,0,0);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < circ_pnt; i++) {
+		ang = (2 * PI * i) / circ_pnt;
+		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
+		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
+	}
+	glEnd();
+
+	glColor4ub(70,70,255, 0);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < circ_pnt; i++) {
+		ang = (2 * PI * i) / circ_pnt;
+		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
+		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
+	}
+	glEnd();
+
+	glPopMatrix();
+
+
+}
+
 void draw_elements(){
 	glLoadIdentity();
 	//Unanimated
 	glTranslatef((windowW)/2, (windowH)/2, 0);
-	
-	glEnd();
+	aquarium();
+
 	//Animated
 	glTranslatef(tx, ty, 0);
 	fish();
@@ -119,7 +192,7 @@ void display(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glClearColor(0,0,1,1);
+	glClearColor(255,255,255,1);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glViewport(0,0, windowW, windowH);
