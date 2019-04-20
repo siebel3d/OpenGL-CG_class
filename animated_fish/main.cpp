@@ -6,8 +6,8 @@
 
 #define PI 3.1315926535898
 
-#define windowH 900
-#define windowW 1600
+#define windowH 400
+#define windowW 600
 
 //translation variables
 float tx=0.0;
@@ -16,6 +16,9 @@ float ty=0.0;
 //variables incrementation
 float xStep=1;
 float yStep=0.25;
+
+//Mirror
+bool isMirror = 0;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -32,14 +35,14 @@ int main(int argc, char** argv){
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
 	glutKeyboardFunc(&keyboard);
-	glutTimerFunc(0,anim,1);
+	glutTimerFunc(150,anim,1);
 	glutMainLoop();
 
 	return(0);
 }
 
 void anim(int value){
-	if ((tx)>(100) || (tx) < (-100)){
+	if ((tx)>(70) || (tx) < (-70)){
 		xStep= -xStep;
 	}
 	if ((ty)>(10) || (ty) < (-10)){
@@ -53,12 +56,14 @@ void anim(int value){
 	printf("\n TX %.2f TY %.2f", tx, ty);
 
 	glutPostRedisplay();
-	glutTimerFunc(50,anim,1);
+	glutTimerFunc(150,anim,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
 	printf("\n Key %c", key);
 	printf("\n1-Translate X\n2-Translate Y\nEnter: ");
+	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
+	printf("\n Mirror %d", isMirror);
 	printf("\nKey %c", key);
 	printf("\n Mouse position: %d x %d", x,y);
 }
@@ -185,7 +190,18 @@ void draw_elements(){
 
 	//Animated
 	glTranslatef(tx, ty, 0);
+	glPushMatrix();
+	if((tx==71)&&(isMirror == 0)&&(xStep==1)){
+		glScaled(-1,1,1);
+		isMirror = 1;		
+	}
+
+	if((tx==-71)&&(isMirror == 1)&&(xStep==-1)){
+		glScaled(-1,1,1);
+		isMirror = 0;
+	}
 	fish();
+	glPopMatrix();
 }
 
 void display(){
