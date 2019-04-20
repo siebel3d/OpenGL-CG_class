@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 
 void desenhar() {
 	GLfloat circ_pnt = 500;
-	GLfloat ang, raioX = 40.0f, raioY = 80.0f;
+	GLfloat ang, raioX = 100.0f, raioY = 100.0f;
 
 	glColor3f(1.0, 0.0, 0.0);
 	glBegin(GL_POLYGON);
