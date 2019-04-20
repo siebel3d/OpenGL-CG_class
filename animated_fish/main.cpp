@@ -4,10 +4,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define PI 3.1315926535898
-
-#define windowH 400
-#define windowW 600
+#define windowH 900
+#define windowW 1600
 
 //translation variables
 float tx=0.0;
@@ -17,8 +15,7 @@ float ty=0.0;
 float xStep=1;
 float yStep=0.25;
 
-//Mirror
-bool isMirror = 0;
+float PI = atanf(1.0f)*4.0f;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -56,19 +53,27 @@ void anim(int value){
 	printf("\n TX %.2f TY %.2f", tx, ty);
 
 	glutPostRedisplay();
-	glutTimerFunc(150,anim,1);
+	glutTimerFunc(20,anim,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
 	printf("\n Key %c", key);
 	printf("\n1-Translate X\n2-Translate Y\nEnter: ");
 	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
-	printf("\n Mirror %d", isMirror);
 	printf("\nKey %c", key);
 	printf("\n Mouse position: %d x %d", x,y);
 }
 
 void fish(){
+	glPushMatrix();
+	if(xStep==1){
+		glScaled(1,1,1);		
+	}
+
+	if(xStep==-1){
+		glScaled(-1,1,1);
+	}
+	
 	glColor3ub(252,146,47);
 	//upper part
 	glBegin(GL_POLYGON);
@@ -116,15 +121,15 @@ void fish(){
 		glVertex2f(10, -7.5);
 		glVertex2f(5, -5);
 	glEnd();
+	glPopMatrix();
 }
 
 void aquarium(){
-	glColor3ub(255,0,0);
-
 	GLfloat circ_pnt = 500;
 	GLfloat ang, raioX = 100.0f, raioY = 80.0f;
 
-	glColor3ub(0,0,0);
+	glLineWidth(3.0);
+	glColor3ub(60,60,100);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < circ_pnt; i++) {
 		if(i<=250){
@@ -155,11 +160,11 @@ void aquarium(){
 	glEnd();
 
 	glPushMatrix();
-	glTranslatef(0,85,0);
+	glTranslatef(0,82,0);
 	raioX=30;
 	raioY=10;
 
-	glColor3ub(0,0,0);
+	glColor3ub(60,60,100);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
@@ -184,22 +189,14 @@ void aquarium(){
 
 void draw_elements(){
 	glLoadIdentity();
+	glPushMatrix();	
 	//Unanimated
 	glTranslatef((windowW)/2, (windowH)/2, 0);
+	glScaled(3,3,3);
 	aquarium();
 
 	//Animated
 	glTranslatef(tx, ty, 0);
-	glPushMatrix();
-	if((tx==71)&&(isMirror == 0)&&(xStep==1)){
-		glScaled(-1,1,1);
-		isMirror = 1;		
-	}
-
-	if((tx==-71)&&(isMirror == 1)&&(xStep==-1)){
-		glScaled(-1,1,1);
-		isMirror = 0;
-	}
 	fish();
 	glPopMatrix();
 }
