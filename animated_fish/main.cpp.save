@@ -4,8 +4,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define windowH 400
-#define windowW 600
+#define windowH 4900
+#define windowW 1600
 
 //translation variables
 float tx=0.0;
@@ -53,7 +53,7 @@ void anim(int value){
 	printf("\n TX %.2f TY %.2f", tx, ty);
 
 	glutPostRedisplay();
-	glutTimerFunc(40,anim,1);
+	glutTimerFunc(20,anim,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -62,18 +62,6 @@ void keyboard(unsigned char key, int x, int y){
 	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
 	printf("\nKey %c", key);
 	printf("\n Mouse position: %d x %d", x,y);
-
-	switch(key){
-		case'1':
-			glColor3ub(252,146,47);
-			break;
-		case'2':
-			glColor3ub(100,100,255);
-			break;
-		case'3':
-			glColor3ub(100,255,100);
-			break;
-	}
 }
 
 void fish(){
@@ -204,7 +192,7 @@ void draw_elements(){
 	glPushMatrix();	
 	//Unanimated
 	glTranslatef((windowW)/2, (windowH)/2, 0);
-	glScaled(2,2,2);
+	glScaled(3,3,3);
 	aquarium();
 
 	//Animated

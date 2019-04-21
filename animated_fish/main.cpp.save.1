@@ -1,3 +1,4 @@
+
 #include<GL/glew.h>
 #include<GL/glut.h>
 #include<math.h>
@@ -62,21 +63,11 @@ void keyboard(unsigned char key, int x, int y){
 	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
 	printf("\nKey %c", key);
 	printf("\n Mouse position: %d x %d", x,y);
-
-	switch(key){
-		case'1':
-			glColor3ub(252,146,47);
-			break;
-		case'2':
-			glColor3ub(100,100,255);
-			break;
-		case'3':
-			glColor3ub(100,255,100);
-			break;
-	}
 }
 
 void fish(){
+	switch(key){
+		case'1':
 	glPushMatrix();
 	if(xStep==1){
 		glScaled(1,1,1);		
