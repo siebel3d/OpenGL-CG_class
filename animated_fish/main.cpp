@@ -7,6 +7,10 @@
 #define windowH 900
 #define windowW 1600
 
+//Scales
+float fScale = 3.5;
+float sScale = 1;
+
 //translation variables
 float tx=0.0;
 float ty=0.0;
@@ -42,6 +46,8 @@ int main(int argc, char** argv){
 	glutInitWindowSize(windowW, windowH);
 	glutInitWindowPosition(100,100);
 	glutCreateWindow("Animated Fish");
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable( GL_BLEND );
 
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
@@ -123,19 +129,19 @@ void keyboard(unsigned char key, int x, int y){
 void fish(){
 	glPushMatrix();
 	if(xStep==1){
-		glScaled(1,1,1);		
+		glScaled(sScale,sScale,sScale);
 	}
 
 	if(xStep==-1){
-		glScaled(-1,1,1);
+		glScaled(-(sScale),sScale,sScale);
 	}
-	
+
 	glColor3ub(cr,cg,cb);
 	//upper part
 	glBegin(GL_POLYGON);
 		glVertex2f(5, 5);
 		glColor3ub(cr,cg,cb);
-		glVertex2f(10, 7.5);		
+		glVertex2f(10, 7.5);
 		glVertex2f(15, 8);
 		glColor3ub(cr2,cg2,cb2);
 		glVertex2f(14, 11);
@@ -204,7 +210,7 @@ void aquarium(){
 	raioX=100;
 	raioY=80;
 
-	glLineWidth(3.0);
+	glLineWidth(4.0);
 	glColor3ub(60,60,100);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < circ_pnt; i++) {
@@ -220,7 +226,7 @@ void aquarium(){
 	}
 	glEnd();
 
-	glColor4ub(70,120,185,130);
+	glColor4ub(70,120,185,100);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		if(i<=250){
@@ -236,7 +242,7 @@ void aquarium(){
 	glEnd();
 
 	glPushMatrix();
-	glTranslatef(0,82,0);
+	glTranslatef(0,80,0);
 	raioX=30;
 	raioY=10;
 
@@ -249,7 +255,7 @@ void aquarium(){
 	}
 	glEnd();
 
-	glColor4ub(70,120,185,130);
+	glColor4ub(220,220,220,130);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
@@ -291,20 +297,21 @@ void aquarium(){
 		glVertex2f(190,-60);
 	glEnd();
 	glPopMatrix();
-
 }
 
 void draw_elements(){
 	glLoadIdentity();
-	glPushMatrix();	
-	//Unanimated
-	glTranslatef((windowW)/2, (windowH)/2, 0);
-	glScalef(3.5,3.5,3.5);
-	aquarium();
+	glPushMatrix();
+	glTranslatef((windowW)/2, (windowH)/2,0);
+	glScalef(fScale,fScale,fScale);
 
 	//Animated
+	glPushMatrix();
 	glTranslatef(tx, ty, 0);
 	fish();
+	glPopMatrix();
+	//Unanimated
+	aquarium();
 	glPopMatrix();
 }
 
