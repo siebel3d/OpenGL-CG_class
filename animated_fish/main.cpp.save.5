@@ -1,11 +1,12 @@
+
 #include<GL/glew.h>
 #include<GL/glut.h>
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
 
-#define windowH 900
-#define windowW 1600
+#define windowH 400
+#define windowW 600
 
 //translation variables
 float tx=0.0;
@@ -27,9 +28,6 @@ float cr2 = 253;
 float cg2 = 196;
 float cb2 = 255;
 
-//
-GLfloat circ_pnt = 500;
-GLfloat ang, raioX, raioY;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -41,7 +39,7 @@ int main(int argc, char** argv){
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowSize(windowW, windowH);
 	glutInitWindowPosition(100,100);
-	glutCreateWindow("Animated Fish");
+	glutCreateWindow("Animation Test");
 
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
@@ -78,7 +76,7 @@ void keyboard(unsigned char key, int x, int y){
 	printf("\n Mouse position: %d x %d", x,y);
 
 	switch(key){
-		case '1':
+		case'1':
 			cr = 252;
 			cg = 146;
 			cb = 41;
@@ -87,7 +85,7 @@ void keyboard(unsigned char key, int x, int y){
 			cg2 = 255;
 			cb2 = 255;
 			break;
-		case '2':
+		case'2':
 			cr = 66;
 			cg = 244;
 			cb = 203;
@@ -96,7 +94,7 @@ void keyboard(unsigned char key, int x, int y){
 			cg2 = 66;
 			cb2 = 66;
 			break;
-		case '3':
+		case'3':
 			cr = 244;
 			cg = 217;
 			cb = 66;
@@ -105,16 +103,7 @@ void keyboard(unsigned char key, int x, int y){
 			cg2 = 96;
 			cb2 = 72;
 			break;
-		case '4':
-			cr = 70;
-			cg = 96;
-			cb = 72;
-
-			cr2 = 253;
-			cg2 = 196;
-			cb2 = 255;
-			break;
-		case 'c':
+		case'c':
 			xStep = -xStep;
 			break;
 	}
@@ -177,32 +166,20 @@ void fish(){
 		glVertex2f(10, -7.5);
 		glVertex2f(5, -5);
 	glEnd();
-	//Eyes
-	raioX=1.2f;
-	raioY=2.5;
-	glPushMatrix();
-	glTranslatef(20,0,0);
-	glBegin(GL_POLYGON);
-		glColor3ub(100,142,99);
-		for(int i=0;i<100; i++){
-			ang=(2*PI*i)/100;
-			glVertex2f(cos(ang)*raioY,sin(ang)*raioY);
+		glBegin(GL_POLYGON);
+		
+		for (int i = 0; i < circ_pnt; i++) {
+			ang = (2 * PI * i) / circ_pnt;
+			glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
+			printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
 		}
 	glEnd();
-	glBegin(GL_POLYGON);
-		glColor3ub(90,50,50);
-		for(int i=0;i<100; i++){
-			ang=(2*PI*i)/100;
-			glVertex2f(cos(ang)*raioX,sin(ang)*raioX);
-		}
-	glEnd();
-	glPopMatrix();
 	glPopMatrix();
 }
 
 void aquarium(){
-	raioX=100;
-	raioY=80;
+	GLfloat circ_pnt = 500;
+	GLfloat ang, raioX = 100.0f, raioY = 80.0f;
 
 	glLineWidth(3.0);
 	glColor3ub(60,60,100);
@@ -220,7 +197,7 @@ void aquarium(){
 	}
 	glEnd();
 
-	glColor4ub(70,120,185,130);
+	glColor4ub(70,70,255, 0);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		if(i<=250){
@@ -249,7 +226,7 @@ void aquarium(){
 	}
 	glEnd();
 
-	glColor4ub(70,120,185,130);
+	glColor4ub(70,70,255, 0);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
@@ -259,38 +236,7 @@ void aquarium(){
 	glEnd();
 
 	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(0,-70,0);
-	glBegin(GL_QUADS);
-		glColor3ub(96,48,36);
-		glVertex2f(-230,0);
-		glVertex2f(230,0);
-		glColor3ub(86,38,26);
-		glVertex2f(230,-15);
-		glVertex2f(-230,-15);
-	glEnd();
-	glBegin(GL_QUADS);
-		glColor3ub(76,28,16);
-		glVertex2f(-220,-15);
-		glVertex2f(220,-15);
-		glColor3ub(66,18,12);
-		glVertex2f(220,-45);
-		glVertex2f(-220,-45);
-	glEnd();
-	glBegin(GL_QUADS);
-		glColor3ub(56,8,6);
-		glVertex2f(-190,-45);
-		glVertex2f(-215,-45);
-		glVertex2f(-215,-60);
-		glVertex2f(-190,-60);
-	glEnd();
-	glBegin(GL_QUADS);
-		glVertex2f(190,-45);
-		glVertex2f(215,-45);
-		glVertex2f(215,-60);
-		glVertex2f(190,-60);
-	glEnd();
-	glPopMatrix();
+
 
 }
 
@@ -299,7 +245,7 @@ void draw_elements(){
 	glPushMatrix();	
 	//Unanimated
 	glTranslatef((windowW)/2, (windowH)/2, 0);
-	glScalef(3.5,3.5,3.5);
+	glScaled(2,2,2);
 	aquarium();
 
 	//Animated
@@ -312,7 +258,7 @@ void display(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glClearColor(0.97,1,0.62,1);
+	glClearColor(255,255,255,1);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glViewport(0,0, windowW, windowH);
