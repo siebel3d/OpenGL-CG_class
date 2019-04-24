@@ -19,6 +19,13 @@ float ty=0.0;
 float xStep=1;
 float yStep=0.25;
 
+//algae anim
+float ax=0.0;
+float ay=0.0;
+
+float axStep=0.5;
+float ayStep=0.2;
+
 //PI value
 float PI = atanf(1.0f)*4.0f;
 
@@ -38,7 +45,8 @@ GLfloat ang, raioX, raioY;
 void display(void);
 void screen(GLsizei w, GLsizei h);
 void keyboard(unsigned char key, int x, int y);
-void anim(int value);
+void anim_fish(int value);
+void anim_algae(int value);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -52,13 +60,14 @@ int main(int argc, char** argv){
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
 	glutKeyboardFunc(&keyboard);
-	glutTimerFunc(150,anim,1);
+	glutTimerFunc(40,anim_fish,1);
+	glutTimerFunc(100,anim_algae,1);
 	glutMainLoop();
 
 	return(0);
 }
 
-void anim(int value){
+void anim_fish(int value){
 	if ((tx)>(70) || (tx) < (-70)){
 		xStep= -xStep;
 	}
@@ -68,21 +77,25 @@ void anim(int value){
 	tx += xStep;
 	ty += yStep;
 
-	printf("\n Top %i \t Bottom %i \t Right %i \t Left %i",((windowH)/2),(((windowH)/2)*-1),((windowW)/2),(((windowW)/2)*-1));
-	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
-	printf("\n TX %.2f TY %.2f", tx, ty);
+	glutPostRedisplay();
+	glutTimerFunc(50,anim_fish,1);
+}
+
+void anim_algae(int value){
+	if((ax)>5 || (ax)<(-5)){
+		axStep = -axStep;
+	}
+	if((ay)>3 || (ay)<(-3)){
+		ayStep = -ayStep;
+	}
+	ax += axStep;
+	ay += ayStep;
 
 	glutPostRedisplay();
-	glutTimerFunc(40,anim,1);
+	glutTimerFunc(150,anim_algae,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
-	printf("\n Key %c", key);
-	printf("\n1-Translate X\n2-Translate Y\nEnter: ");
-	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
-	printf("\nKey %c", key);
-	printf("\n Mouse position: %d x %d", x,y);
-
 	switch(key){
 		case '1':
 			cr = 252;
@@ -222,11 +235,10 @@ void aquarium(){
 
 		ang = (2 * PI * i) / circ_pnt;
 		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
-		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
 	}
 	glEnd();
 
-	glColor4ub(70,120,185,100);
+	glColor4ub(70,120,185,80);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		if(i<=250){
@@ -237,7 +249,6 @@ void aquarium(){
 
 		ang = (2 * PI * i) / circ_pnt;
 		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
-		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
 	}
 	glEnd();
 
@@ -251,16 +262,14 @@ void aquarium(){
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
 		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
-		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
 	}
 	glEnd();
 
-	glColor4ub(220,220,220,130);
+	glColor4ub(220,220,220,100);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < circ_pnt; i++) {
 		ang = (2 * PI * i) / circ_pnt;
 		glVertex2d(cos(ang) * raioX, sin(ang) * raioY);
-		printf("%f		%f\n", cos(ang) * raioX, sin(ang) * raioY);
 	}
 	glEnd();
 
@@ -299,18 +308,67 @@ void aquarium(){
 	glPopMatrix();
 }
 
+void algae(){
+	glBegin(GL_TRIANGLE_STRIP);
+		glColor3ub(0,40,0);
+		glVertex2f(-2,0);
+		glVertex2f(2,0);
+		glColor3ub(40,100,20);
+		glVertex2f(((ax/2)-1.8),(ay+12));
+		glVertex2f(((ax/2)+1.8),(ay+12));
+		glColor3ub(50,140,30);
+		glVertex2f(((-ax*0.2)),((ay*2)+26));
+	glEnd();
+}
+
+void draw_all_algae(){
+	glPushMatrix();	
+		glTranslatef(-50,-61,0);
+		glRotatef(-20,0,0,1);
+		algae();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(-35,-65,0);
+		glRotatef(-15,0,0,1);
+		glScalef(-1.2,1,1);
+		algae();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(-22,-68,0);
+		glRotatef(-10,0,0,1);
+		glScalef(1.2,1,1);
+		algae();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(-10,-70,0);
+		glRotatef(-8,0,0,1);
+		glScalef(0.7,1,1);
+		algae();
+	glPopMatrix();
+}
+
 void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 	glTranslatef((windowW)/2, (windowH)/2,0);
 	glScalef(fScale,fScale,fScale);
 
-	//Animated
+	//Moving
 	glPushMatrix();
 	glTranslatef(tx, ty, 0);
 	fish();
 	glPopMatrix();
-	//Unanimated
+	//Fixed position
+	draw_all_algae();
+	glPushMatrix();
+		glScalef(-0.8,1,1);
+		glRotatef(8,0,0,1);
+		glTranslatef(2,0,0);
+		draw_all_algae();
+	glPopMatrix();
 	aquarium();
 	glPopMatrix();
 }
