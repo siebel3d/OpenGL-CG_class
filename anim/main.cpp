@@ -24,9 +24,9 @@ int main(int argc, char** argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(windowW, windowH);
-	glutInitWindowPosition(100,100);
+	glutInitWindowPosition(0,0);
 	glutCreateWindow("Animation Test");
-
+	glutFullScreen();
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
 	glutKeyboardFunc(&keyboard);
@@ -46,9 +46,9 @@ void anim(int value){
 	tx += xStep;
 	ty += yStep;
 
-	printf("\n Top %.2f \t Bottom %.2f \t Right %.2f \t Left %.2f",((windowH)/2),(((windowH)/2)*-1),((windowW)/2),(((windowW)/2)*-1));
-	printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
-	printf("\n TX %.2f TY %.2f", tx, ty);
+	//printf("\n Top %.2f \t Bottom %.2f \t Right %.2f \t Left %.2f",((windowH)/2),(((windowH)/2)*-1),((windowW)/2),(((windowW)/2)*-1));
+	//printf("\n Step X %.2f Step Y %.2f", xStep, yStep);
+	//printf("\n TX %.2f TY %.2f", tx, ty);
 
 	glutPostRedisplay();
 	glutTimerFunc(150,anim,1);

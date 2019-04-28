@@ -1,0 +1,59 @@
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+
+#include <iostream>
+
+using namespace std;
+
+void init();
+void display();
+
+float a = 200.0, b= 200.0;
+
+void setPoint(float x, float y){
+	glColor3f(1.0, 0.0, 0.0);
+        glBegin(GL_POINTS);
+        	glVertex2f(x,y);
+        glEnd();
+}
+
+void init(){
+	glClearColor(1.0,1.0,1.0,1.0);
+	gluOrtho2D(0.0, 400.0, 0.0, 300.0);
+}
+
+void display(){
+	glClear( GL_COLOR_BUFFER_BIT);
+        glPointSize(10.0);
+        setPoint(a,b);
+        glFlush();
+}
+
+void mouse(int mouse, int state, int x, int y){
+switch(mouse){
+	case GLUT_LEFT_BUTTON:
+		if(state == GLUT_DOWN){
+			cout << x << " -> " << y << endl;
+			a = x/1.0;
+			b = 300.0 - (y/1.0);
+			glutPostRedisplay();
+		}
+		break;
+	}
+}
+
+int main(int argc, char* argv[]){
+glutInit(&argc, argv);
+glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+glutInitWindowSize(400,300);
+glutInitWindowPosition(200,100);
+glutCreateWindow("OpenGL Program");
+init();
+glutDisplayFunc(display);
+glutMouseFunc(mouse);
+glutMainLoop();
+                                                                                                                                                                                                    return 0;
+
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    
