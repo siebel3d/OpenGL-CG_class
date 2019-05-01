@@ -4,7 +4,10 @@
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<SOIL/SOIL.h>
+#include<unistd.h>
+#include "SOIL/SOIL.h"
+
+int usleep(useconds_t useconds);
 
 #define windowH 900
 #define windowW 1600
@@ -41,6 +44,7 @@ void display(void);
 void screen(GLsizei w, GLsizei h);
 void keyboard(unsigned char key, int x, int y);
 void mouseMovement(int x, int y);
+void anim(int value);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -55,9 +59,15 @@ int main(int argc, char** argv){
 	glutDisplayFunc(display);
 	glutKeyboardFunc(&keyboard);
 	glutPassiveMotionFunc(mouseMovement);
+	glutTimerFunc(10,anim,1);
 	glutMainLoop();
 
 	return(0);
+}
+
+void anim(int value){
+	glutPostRedisplay();
+	glutTimerFunc(10,anim,1);
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -66,16 +76,16 @@ void keyboard(unsigned char key, int x, int y){
 			ballColor = black;
 			break;
 		case 'w':
+			printf("\nA value: %.2f", a_value);
+			printf("\nB value: %.2f", b_value);
+			printf("\nC value: %.2f",c_value);
+			printf("\nBall Axis: %.2f",ballAxis*2);
 			break;
 		case 's':
 			break;
 		case 'o':
 			break;
 		case 'l':
-			break;
-		case 27:
-			glutDestroyWindow (0);
-			exit(0);
 			break;
 	}
 }
@@ -90,10 +100,8 @@ void mouseMovement(int x, int y){
 
 	if(c_value < (ballAxis*2)){
 		touch=true;
-		glEnable(GL_TEXTURE_2D);
 	}else{
 		touch=false;
-		glDisable(GL_TEXTURE_2D);
 	}
 }
 
@@ -110,24 +118,12 @@ void ball(){
 
 void gameOverScreen(){
 	GLuint tex_2d = SOIL_load_OGL_texture
-	(
-		"src/jequiti.png",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-	);
-
-	if( 0 == tex_2d ){
-	printf( "SOIL loading error: '%s'\n", SOIL_last_result() );
-	}
-
-	glBindTexture(GL_TEXTURE_2D, tex_2d);
-	glBegin(GL_QUADS);
-	glTexCoord2f(1.0f,0.0f);        glVertex2f(800, 450);
-	glTexCoord2f(1.0f,1.0f);        glVertex2f(800, -450);
-	glTexCoord2f(0.0f,1.0f);        glVertex2f(-800, -450);
-	glTexCoord2f(0.0f,0.0f);        glVertex2f(-800, 450);
-	glEnd();
+		(
+				"img.png",
+						SOIL_LOAD_AUTO,
+								SOIL_CREATE_NEW_ID,
+										SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+											);
 }
 
 void draw_elements(){
@@ -148,6 +144,10 @@ void draw_elements(){
 
 	if(touch==true){
 		gameOverScreen();
+		//usleep(100000);
+		//glutDestroyWindow (0);
+		//exit(0);
+
 	}
 
 	glutPostRedisplay();
