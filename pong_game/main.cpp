@@ -48,7 +48,7 @@ float c_value;
 bool touch=false;
 
 //Variables for game scale
-float scaleTV = 1;
+float scaleTV = 0.70;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -126,8 +126,8 @@ void centerLine(){
 	glLineWidth(5);
 	glColor3f(white,white,white);
 	glBegin(GL_LINES);
-		glVertex2f(0,-280);
-		glVertex2f(0,300);
+		glVertex2f(0,-410);
+		glVertex2f(0,440);
 	glEnd();
 }
 
@@ -176,15 +176,15 @@ void gameOverScreen(){
 }
 
 void scoreText(){
-	drawText(-18,-300, int2str(p1.score) + " : " + int2str(p2.score));
+	drawText(-22,-420, int2str(p1.score) + " : " + int2str(p2.score));
 }
 
 void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
-		glScalef(scaleTV,-(scaleTV),scaleTV);
 		gameOverScreen();
+		glScalef(scaleTV,-(scaleTV),scaleTV);
 		scoreText();
 		centerLine();
 		glPushMatrix();
@@ -194,11 +194,11 @@ void draw_elements(){
 		glPopMatrix();
 
 		glPushMatrix();
-			glTranslatef(-600,0,0);
+			glTranslatef(-850,0,0);
 			paddle();
 		glPopMatrix();
 		glPushMatrix();
-			glTranslatef(600,0,0);
+			glTranslatef(850,0,0);
 			paddle();
 		glPopMatrix();
 	
