@@ -1,10 +1,11 @@
 #include<GL/glew.h>
 #include<GL/glut.h>
 #include<GLFW/glfw3.h>
+#include<GL/freeglut.h>
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<sstream.h>
+#include<sstream>
 
 #define windowH 900
 #define windowW 1600
@@ -16,6 +17,14 @@ struct Vertices{
 	int x;
 	int y;
 };
+
+struct Player{
+	int score;
+	float paddlePos;
+};
+
+struct Player p1;
+struct Player p2;
 
 //Variables for circle drawing
 GLfloat circ_pnt = 200;
@@ -67,6 +76,8 @@ void keyboard(unsigned char key, int x, int y){
 			ballColor = black;
 			break;
 		case 'w':
+			p1.score+=1;
+			p2.score+=1;
 			break;
 		case 's':
 			break;
@@ -96,6 +107,27 @@ void mouseMovement(int x, int y){
 	}
 }
 
+void drawText(float x, float y, std::string text) {
+    glRasterPos2f(x, y);
+    glColor3f(white,white,white);
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)text.c_str());
+}
+
+std::string int2str(int x){
+	std::stringstream ss;
+	ss << x;
+	return ss.str( );
+}
+
+void centerLine(){
+	glLineWidth(5);
+	glColor3f(white,white,white);
+	glBegin(GL_LINES);
+		glVertex2f((windowW/2),(windowH-40));
+		glVertex2f((windowW/2),-(windowH-40));
+	glEnd();
+}
+
 void ball(){
 	glColor3f(ballColor,ballColor,ballColor);
 	ballAxis = 30;
@@ -107,28 +139,51 @@ void ball(){
 	glEnd();
 }
 
+void paddle(){
+	glColor3f(white,white,white);
+	glBegin(GL_QUADS);
+		glVertex2f(-20,40);
+		glVertex2f(20,40);
+		glVertex2f(20,-40);
+		glVertex2f(-20,-40);
+	glEnd();
+}
+
 void gameOverScreen(){
 	
 }
 
+void scoreText(){
+	drawText((windowW/2)-18,(windowH-30), int2str(p1.score) + " : " + int2str(p2.score));
+}
+
 void draw_elements(){
 	glLoadIdentity();
+	scoreText();
+	centerLine();
 	glPushMatrix();
 	glTranslatef((windowW)/2,(windowH)/2,0);
 	glScalef(1,-1,1);
-	glPushMatrix();
-	glTranslatef(v2.x,v2.y,0);
-	ballColor=grey;
-	ball();
-	glPopMatrix();
 	glPushMatrix();
 	glTranslatef(v1.x,v1.y,0);
 	ballColor=white;
 	ball();
 	glPopMatrix();
 
-	if(touch==true){
+	glPushMatrix();
+	glTranslatef(-700,0,0);
+	paddle();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(700,0,0);
+	paddle();
+	glPopMatrix();
+	
+	if((p1.score==10)||(p2.score==10)){
 		gameOverScreen();
+		glutDestroyWindow(0);
+		exit(0);
 	}
 
 	glutPostRedisplay();
