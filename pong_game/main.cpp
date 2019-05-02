@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<sstream>
+#include<SOIL/SOIL.h>
 
 #define windowH 900
 #define windowW 1600
@@ -47,7 +48,7 @@ float c_value;
 bool touch=false;
 
 //Variables for game scale
-float scaleTV = 0.75f;
+float scaleTV = 1;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -125,8 +126,8 @@ void centerLine(){
 	glLineWidth(5);
 	glColor3f(white,white,white);
 	glBegin(GL_LINES);
-		glVertex2f(0,-410);
-		glVertex2f(0,440);
+		glVertex2f(0,-280);
+		glVertex2f(0,300);
 	glEnd();
 }
 
@@ -152,11 +153,30 @@ void paddle(){
 }
 
 void gameOverScreen(){
-	
+	GLuint tex_2d = SOIL_load_OGL_texture
+	(
+		"tv_mask_bezel.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+		);
+
+		if(0==tex_2d){
+		printf("Error: '%s'\n", SOIL_last_result() );
+		}
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, tex_2d);
+		glBegin(GL_QUADS);
+		glTexCoord2f(1,1);	glVertex2f(800,450);
+		glTexCoord2f(1,0);	glVertex2f(800,-450);
+		glTexCoord2f(0,0);	glVertex2f(-800,-450);
+		glTexCoord2f(0,1);	glVertex2f(-800,450);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
 }
 
 void scoreText(){
-	drawText(-18,-420, int2str(p1.score) + " : " + int2str(p2.score));
+	drawText(-18,-300, int2str(p1.score) + " : " + int2str(p2.score));
 }
 
 void draw_elements(){
@@ -164,6 +184,7 @@ void draw_elements(){
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
 		glScalef(scaleTV,-(scaleTV),scaleTV);
+		gameOverScreen();
 		scoreText();
 		centerLine();
 		glPushMatrix();
@@ -173,11 +194,11 @@ void draw_elements(){
 		glPopMatrix();
 
 		glPushMatrix();
-			glTranslatef(-700,0,0);
+			glTranslatef(-600,0,0);
 			paddle();
 		glPopMatrix();
 		glPushMatrix();
-			glTranslatef(700,0,0);
+			glTranslatef(600,0,0);
 			paddle();
 		glPopMatrix();
 	
