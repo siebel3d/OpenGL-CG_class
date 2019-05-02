@@ -163,7 +163,7 @@ void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
-		glScalef(scaleTV,-(scaleTV),scaleTV);
+		glScalef(scaleTV,-(scaleTV1,1);
 		scoreText();
 		centerLine();
 		glPushMatrix();
