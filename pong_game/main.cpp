@@ -35,6 +35,11 @@ GLfloat ang, Xaxis, Yaxis, ballAxis;
 struct Vertices v1;
 struct Vertices v2 = {.x=50, .y=150};
 
+//Paddle X position;
+float paddlelX = -(windowW/2)+30;
+float paddlerX = (windowW/2)-30;
+float paddleYlimit = (windowH/2)-95;
+float paddleSpeed = 5;
 //Colors
 float black = 0.0f;
 float white = 1.0f;
@@ -48,12 +53,14 @@ float c_value;
 bool touch=false;
 
 //Variables for game scale
-float scaleTV = 0.70;
+float scaleTV = 1;
+int intervalT=50;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
 void keyboard(unsigned char key, int x, int y);
 void mouseMovement(int x, int y);
+void update(int value);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -69,24 +76,30 @@ int main(int argc, char** argv){
 	glutKeyboardFunc(&keyboard);
 	glutPassiveMotionFunc(mouseMovement);
 	glutMainLoop();
+	glutTimerFunc(intervalT, update, 0);
 
 	return(0);
 }
 
 void keyboard(unsigned char key, int x, int y){
+	if(key == 'w'&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos>=-(paddleYlimit+paddleSpeed)))){
+		p1.paddlePos-=paddleSpeed;
+		printf("paddle pos: %f\n",p1.paddlePos);
+		printf("paddle limit + speed: %f\n",paddleYlimit+paddleSpeed);
+
+	} 
+	if(key == 's'&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos<=-(paddleYlimit+paddleSpeed)))){
+		p1.paddlePos+=paddleSpeed;
+		printf("paddle pos: %f\n",p1.paddlePos);
+		printf("paddle limit + speed: %f\n",-(paddleYlimit+paddleSpeed));
+	} 
+
+	if(key == 'o'&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-paddleYlimit+paddleSpeed))) p2.paddlePos-=paddleSpeed;
+	if(key == 'l'&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-paddleYlimit+paddleSpeed))) p2.paddlePos+=paddleSpeed;
+	
 	switch(key){
 		case 'b':
 			ballColor = black;
-			break;
-		case 'w':
-			p1.score+=1;
-			p2.score+=1;
-			break;
-		case 's':
-			break;
-		case 'o':
-			break;
-		case 'l':
 			break;
 		case 27:
 			glutDestroyWindow (0);
@@ -103,11 +116,19 @@ void mouseMovement(int x, int y){
 	float b_value=v1.y-v2.y;
 	float c_value=sqrt((a_value*a_value)+(b_value*b_value));
 
-	if(c_value < (ballAxis*2)){
-		touch=true;
-	}else{
-		touch=false;
+	if(v1.x < paddlelX){
+		p1.score+=1;
 	}
+
+	if(v1.x > paddlerX){
+		p1.score+=1;
+	}
+}
+
+void update(int value){
+	//keyboard();
+	glutTimerFunc(intervalT, update, 0);
+	glutPostRedisplay();
 }
 
 void drawText(float x, float y, std::string text) {
@@ -122,12 +143,12 @@ std::string int2str(int x){
 	return ss.str( );
 }
 
-void centerLine(){
+void centerLine(float x, float y){
 	glLineWidth(5);
 	glColor3f(white,white,white);
 	glBegin(GL_LINES);
-		glVertex2f(0,-410);
-		glVertex2f(0,440);
+		glVertex2f(x,-(y-30));
+		glVertex2f(x,y);
 	glEnd();
 }
 
@@ -142,13 +163,13 @@ void ball(){
 	glEnd();
 }
 
-void paddle(){
+void paddle(float x, float y, float trans, float pos){
 	glColor3f(white,white,white);
 	glBegin(GL_QUADS);
-		glVertex2f(-10,60);
-		glVertex2f(10,60);
-		glVertex2f(10,-60);
-		glVertex2f(-10,-60);
+		glVertex2f(-x+trans,y+pos);
+		glVertex2f(x+trans,y+pos);
+		glVertex2f(x+trans,-y+pos);
+		glVertex2f(-x+trans,-y+pos);
 	glEnd();
 }
 
@@ -183,25 +204,19 @@ void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
-		gameOverScreen();
+		//gameOverScreen();
 		glScalef(scaleTV,-(scaleTV),scaleTV);
 		scoreText();
-		centerLine();
+		centerLine(0,440);
 		glPushMatrix();
 			glTranslatef(v1.x,v1.y,0);
 			ballColor=white;
 			ball();
 		glPopMatrix();
 
-		glPushMatrix();
-			glTranslatef(-850,0,0);
-			paddle();
-		glPopMatrix();
-		glPushMatrix();
-			glTranslatef(850,0,0);
-			paddle();
-		glPopMatrix();
-	
+		paddle(10,60,paddlelX,p1.paddlePos);
+		paddle(10,60,paddlerX,p2.paddlePos);
+
 		if((p1.score==10)||(p2.score==10)){
 			gameOverScreen();
 			glutDestroyWindow(0);
