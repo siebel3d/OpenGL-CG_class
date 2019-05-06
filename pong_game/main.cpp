@@ -88,7 +88,7 @@ void keyboard(unsigned char key, int x, int y){
 		printf("paddle limit + speed: %f\n",paddleYlimit+paddleSpeed);
 
 	} 
-	if(key == 's'&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos<=-(paddleYlimit+paddleSpeed)))){
+	if(key == 's'&&((p1.paddlePos<=paddleYlimit-paddleSpeed)&&(p1.paddlePos<=(paddleYlimit+paddleSpeed)))){
 		p1.paddlePos+=paddleSpeed;
 		printf("paddle pos: %f\n",p1.paddlePos);
 		printf("paddle limit + speed: %f\n",-(paddleYlimit+paddleSpeed));
