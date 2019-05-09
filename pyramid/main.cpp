@@ -30,7 +30,7 @@ void reshape(GLsizei w, GLsizei h){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+	gluPerspective(30.0f, aspect, 0.1f, 100.0f);
 
 	glClearColor(0,0,0,1);
 	glEnable(GL_DEPTH_TEST);
@@ -47,33 +47,82 @@ void display(){
 
 	glBegin(GL_TRIANGLES);
 		//front
-		glColor3f(1,0,0);
+		glColor3f(1,1,1);
 			glVertex3f(0,1,0);
-		glColor3f(0,1,0);
 			glVertex3f(-1,-1,1);
-		glColor3f(0,0,1);
 			glVertex3f(1,-1,1);
 		//right
-		glColor3f(1,0,0);
+		glColor3f(0.9,0.9,0.9);
 			glVertex3f(0,1,0);
-		glColor3f(0,0,1);
 			glVertex3f(1,-1,1);
-		glColor3f(0,1,0);
 			glVertex3f(1,-1,-1);
 		//back
-		glColor3f(1,0,0);
+		glColor3f(0.6,0.6,0.6);
 			glVertex3f(0,1,0);
-		glColor3f(0,1,0);
 			glVertex3f(1,-1,-1);
-		glColor3f(0,0,1);
 			glVertex3f(-1,-1,-1);
 		//left
-		glColor3f(1,0,0);
+		glColor3f(0.9,0.9,0.9);
 			glVertex3f(0,1,0);
-		glColor3f(0,0,1);
 			glVertex3f(-1,-1,-1);
-		glColor3f(0,1,0);
 			glVertex3f(-1,-1,1);
+	glEnd();
+
+	glTranslatef(3,0,-6);
+
+	glBegin(GL_QUADS);
+	//front
+	// White side - BACK
+	glColor3f(1,0,0);
+	glVertex3f(  1, -1, 1 );
+	glColor3f(0,1,0);
+	glVertex3f(  1,  1, 1 );
+	glColor3f(0,0,1);
+	glVertex3f( -1,  1, 1 );
+	glColor3f(0,1,1);
+	glVertex3f( -1, -1, 1 );
+	 
+	// Purple side - RIGHT
+	glColor3f(1,0,0);
+	glVertex3f( 1, -1, -1 );
+	glColor3f(0,1,0);
+	glVertex3f( 1,  1, -1 );
+	glColor3f(0,0,1);
+	glVertex3f( 1,  1,  1 );
+	glColor3f(0,1,1);
+	glVertex3f( 1, -1,  1 );
+	 
+	// Green side - LEFT
+	glColor3f(1,0,0);
+	glVertex3f( -1, -1,  1 );
+	glColor3f(0,1,0);
+	glVertex3f( -1,  1,  1 );
+	glColor3f(0,0,1);
+	glVertex3f( -1,  1, -1 );
+	glColor3f(0,1,1);
+	glVertex3f( -1, -1, -1 );
+	 
+	// Blue side - TOP
+	glColor3f(1,0,0);
+	glVertex3f(  1,  1,  1 );
+	glColor3f(0,1,0);
+	glVertex3f(  1,  1, -1 );
+	glColor3f(0,0,1);
+	glVertex3f( -1,  1, -1 );
+	glColor3f(0,1,1);
+	glVertex3f( -1,  1,  1 );
+	 
+	// Red side - BOTTOM
+	glColor3f(1,0,0);
+	glVertex3f(  1, -1, -1 );
+	glColor3f(0,1,0);
+	glVertex3f(  1, -1,  1 );
+	glColor3f(0,0,1);
+	glVertex3f( -1, -1,  1 );
+	glColor3f(0,1,1);
+	glVertex3f( -1, -1, -1 );
+
+
 	glEnd();
 
 	glutSwapBuffers();

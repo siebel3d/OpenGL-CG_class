@@ -44,7 +44,8 @@ void mouseMovement(int x, int y);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	//glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(windowW, windowH);
 	glutInitWindowPosition(0,0);
 	glutCreateWindow("Circle Events");
@@ -164,7 +165,7 @@ void display(){
 	glViewport(0,0,windowW, windowH);
 	draw_elements();
 
-	glFlush();
+	glutSwapBuffers();
 }
 
 void screen(GLsizei w, GLsizei h){
