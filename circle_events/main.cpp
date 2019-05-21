@@ -96,6 +96,9 @@ void mouseMovement(int x, int y){
 		touch=false;
 		glDisable(GL_TEXTURE_2D);
 	}
+
+	printf("\nX: %i", v1.x);
+	printf("\nY: %i", v1.y);
 }
 
 void ball(){
