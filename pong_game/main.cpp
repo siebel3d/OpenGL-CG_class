@@ -7,6 +7,7 @@
 #include<stdlib.h>
 #include<sstream>
 #include<SOIL/SOIL.h>
+#include <unistd.h>
 
 #define windowH 900
 #define windowW 1600
@@ -28,18 +29,20 @@ struct Player p1;
 struct Player p2;
 
 //Variables for circle drawing
-GLfloat circ_pnt = 200;
-GLfloat ang, Xaxis, Yaxis, ballAxis;
+GLfloat circ_pnt = 100;
+GLfloat ang, ballAxis=10;
 
 //position variables
 struct Vertices v1;
-struct Vertices v2 = {.x=50, .y=150};
 
-//Paddle X position;
+//Paddle variables;
+float paddleXsize;
+float paddleYsize;
 float paddlelX = -(windowW/2)+30;
 float paddlerX = (windowW/2)-30;
 float paddleYlimit = (windowH/2)-95;
-float paddleSpeed = 5;
+float paddleSpeed = 1.5;
+
 //Colors
 float black = 0.0f;
 float white = 1.0f;
@@ -47,20 +50,26 @@ float ballColor = white;
 float grey = 0.5f;
 
 //Variables for ball colision
-float a_value;
-float b_value;
-float c_value;
-bool touch=false;
+
+float ballXDir=-1.0f;
+float ballYDir=0.0f;
+float ballSpeed=2;
 
 //Variables for game scale
 float scaleTV = 1;
-int intervalT=50;
+int intervalT= 1000/150;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
-void keyboard(unsigned char key, int x, int y);
+void keyPressed(unsigned char key, int x, int y);
+void keyUp(unsigned char key, int x, int y);
+void keyOperations(void);
 void mouseMovement(int x, int y);
 void update(int value);
+void updateBall();
+
+bool* keyStates = new bool[256];
+
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -73,62 +82,74 @@ int main(int argc, char** argv){
 	glutFullScreen();
 	glutReshapeFunc(screen);
 	glutDisplayFunc(display);
-	glutKeyboardFunc(&keyboard);
+	glutKeyboardFunc(keyPressed);
+	glutKeyboardUpFunc(keyUp);
 	glutPassiveMotionFunc(mouseMovement);
-	glutMainLoop();
 	glutTimerFunc(intervalT, update, 0);
+	glutMainLoop();
 
 	return(0);
 }
 
-void keyboard(unsigned char key, int x, int y){
-	if(key == 'w'&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos>=-(paddleYlimit+paddleSpeed)))){
-		p1.paddlePos-=paddleSpeed;
-		printf("paddle pos: %f\n",p1.paddlePos);
-		printf("paddle limit + speed: %f\n",paddleYlimit+paddleSpeed);
+void keyPressed(unsigned char key, int x, int y){
+	if(key == 'w') keyStates[key] = true;
+	if(key == 's') keyStates[key] = true;
 
-	} 
-	if(key == 's'&&((p1.paddlePos<=paddleYlimit-paddleSpeed)&&(p1.paddlePos<=(paddleYlimit+paddleSpeed)))){
-		p1.paddlePos+=paddleSpeed;
-		printf("paddle pos: %f\n",p1.paddlePos);
-		printf("paddle limit + speed: %f\n",-(paddleYlimit+paddleSpeed));
-	} 
+	if(key == 'o') keyStates[key] = true;
+	if(key == 'l') keyStates[key] = true;
 
-	if(key == 'o'&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-paddleYlimit+paddleSpeed))) p2.paddlePos-=paddleSpeed;
-	if(key == 'l'&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-paddleYlimit+paddleSpeed))) p2.paddlePos+=paddleSpeed;
+	if(key == 'z') keyStates[key] = true;
 	
 	switch(key){
-		case 'b':
-			ballColor = black;
-			break;
 		case 27:
 			glutDestroyWindow (0);
 			exit(0);
 			break;
+		case '1':
+			ballSpeed=1;			
+			break;
+		case '5':
+			ballSpeed=5;
+			break;
+	}
+}
+
+void keyUp(unsigned char key, int x, int y){
+	if(key == 'w') keyStates[key] = false;
+	if(key == 's') keyStates[key] = false;
+
+	if(key == 'o') keyStates[key] = false;
+	if(key == 'l') keyStates[key] = false;
+
+	if(key == 'z') keyStates[key] = false;
+}
+
+void keyOperations(void){
+	if((keyStates['w'])&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos>=-(paddleYlimit+paddleSpeed)))){
+		p1.paddlePos-=paddleSpeed;
+	}
+	if((keyStates['s'])&&((p1.paddlePos<=paddleYlimit-paddleSpeed)&&(p1.paddlePos<=(paddleYlimit+paddleSpeed)))){
+		p1.paddlePos+=paddleSpeed;
+	}
+	if((keyStates['o'])&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-(paddleYlimit+paddleSpeed)))){
+		p2.paddlePos-=paddleSpeed;
+	}
+	if((keyStates['l'])&&((p2.paddlePos<=paddleYlimit-paddleSpeed)&&(p2.paddlePos<=(paddleYlimit+paddleSpeed)))){
+		p2.paddlePos+=paddleSpeed;
+	}
+	if(keyStates['z']){
+		ballColor=black;
 	}
 }
 
 void mouseMovement(int x, int y){
-	v1.x = x-(windowW/2);
-	v1.y = y-(windowH/2);
-
-	float a_value=v1.x-v2.x;
-	float b_value=v1.y-v2.y;
-	float c_value=sqrt((a_value*a_value)+(b_value*b_value));
-
-	if(v1.x < paddlelX){
-		p1.score+=1;
-	}
-
-	if(v1.x > paddlerX){
-		p1.score+=1;
-	}
 }
 
 void update(int value){
 	//keyboard();
-	glutTimerFunc(intervalT, update, 0);
+	updateBall();
 	glutPostRedisplay();
+	glutTimerFunc(intervalT, update, 0);
 }
 
 void drawText(float x, float y, std::string text) {
@@ -154,13 +175,69 @@ void centerLine(float x, float y){
 
 void ball(){
 	glColor3f(ballColor,ballColor,ballColor);
-	ballAxis = 30;
 	glBegin(GL_POLYGON);
 		for(int i=0;i<circ_pnt;i++){
 			ang=(2*PI*i)/circ_pnt;
 			glVertex2f(cos(ang)*ballAxis,sin(ang)*ballAxis);
 		}
 	glEnd();
+}
+
+void vec2_norm(float& x, float &y) {
+        // sets a vectors length to 1 (which means that x + y == 1)
+        float length = sqrt((x * x) + (y * y));
+        if (length != 0.0f) {
+            length = 1.0f / length;
+            x *= length;
+            y *= length;
+        }
+    }	
+
+void updateBall(){
+	v1.x += ballXDir * ballSpeed;
+	v1.y += ballYDir * ballSpeed;
+
+	if(v1.x == paddlelX+paddleXsize+ballAxis && v1.y >= p1.paddlePos - paddleYsize && v1.y <= p1.paddlePos + paddleYsize){
+		ballXDir*=-1;
+		if((v1.y < p1.paddlePos && v1.y > p1.paddlePos-paddleYsize)||(v1.y > p1.paddlePos && v1.y < p1.paddlePos+paddleYsize)){
+			ballYDir=-(p1.paddlePos/paddleYsize);
+		}
+	}
+
+	if(v1.x == paddlerX-paddleXsize-ballAxis && v1.y >= p2.paddlePos - paddleYsize && v1.y <= p2.paddlePos + paddleYsize){
+		ballXDir*=-1;
+		if((v1.y < p2.paddlePos && v1.y > p2.paddlePos-paddleYsize)||(v1.y > p2.paddlePos && v1.y < p2.paddlePos+paddleYsize)){
+			ballYDir=-(p1.paddlePos/paddleYsize);
+		}
+
+	}
+
+	if(v1.y > windowH/2-ballAxis){
+		ballYDir = ballYDir*(-1);
+	}
+
+	if(v1.y < -(windowH/2-ballAxis)){
+		ballYDir = ballYDir*(-1);
+	}
+
+	if (v1.x < -(windowW/2-ballAxis)){
+		p2.score+=1;
+		v1.x = 0;
+		v1.y = 0;
+		usleep(200000);
+		ballXDir = ballXDir*(-1);
+		ballColor=white;
+	}
+	if (v1.x > windowW/2-ballAxis){
+		p1.score+=1;
+		v1.x = 0;
+		v1.y = 0;
+		usleep(200000);
+		ballXDir = ballXDir*(-1);
+		ballColor=white;
+	}
+
+	//vec2_norm(ballXDir, ballYDir);
 }
 
 void paddle(float x, float y, float trans, float pos){
@@ -171,6 +248,9 @@ void paddle(float x, float y, float trans, float pos){
 		glVertex2f(x+trans,-y+pos);
 		glVertex2f(-x+trans,-y+pos);
 	glEnd();
+
+	paddleXsize = x;
+	paddleYsize = y;
 }
 
 void gameOverScreen(){
@@ -210,7 +290,7 @@ void draw_elements(){
 		centerLine(0,440);
 		glPushMatrix();
 			glTranslatef(v1.x,v1.y,0);
-			ballColor=white;
+			//ballColor=white;
 			ball();
 		glPopMatrix();
 
@@ -230,6 +310,8 @@ void draw_elements(){
 void display(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	keyOperations();
 
 	glClearColor(black,black,black,white);
 	glClear(GL_COLOR_BUFFER_BIT);
