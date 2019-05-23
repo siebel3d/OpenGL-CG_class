@@ -7,12 +7,9 @@
 #include<stdlib.h>
 #include<sstream>
 #include<unistd.h>
-#include<curses.h> 
 
 #define windowH 900
 #define windowW 1600
-#define interval 16,666666667
-
 float PI = atanf(1.0f)*4.0f;
 
 struct Vertices{
@@ -27,13 +24,11 @@ struct Player{
 
 struct Player p1;
 struct Player p2;
+struct Vertices v1;
 
 //Variables for circle drawing
 GLfloat circ_pnt = 100;
 GLfloat ang, ballAxis=10;
-
-//position variables
-struct Vertices v1;
 
 //Paddle variables;
 float paddleXsize;
@@ -49,14 +44,13 @@ float white = 1.0f;
 float ballColor = white;
 
 //Variables for ball colision
-
 float ballXDir=-1.0f;
 float ballYDir=0.0f;
-float ballSpeed=2;
+float ballSpeed=10;
 
 //Variables for game scale
 float scaleTV = 1;
-int intervalT= 1000/150;
+int intervalT= 1000/60;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -66,9 +60,7 @@ void keyOperations(void);
 void mouseMovement(int x, int y);
 void update(int value);
 void updateBall();
-
 bool* keyStates = new bool[256];
-
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
@@ -85,29 +77,20 @@ int main(int argc, char** argv){
 	glutKeyboardUpFunc(keyUp);
 	glutTimerFunc(intervalT, update, 0);
 	glutMainLoop();
-
 	return(0);
 }
 
 void keyPressed(unsigned char key, int x, int y){
 	if(key == 'w') keyStates[key] = true;
 	if(key == 's') keyStates[key] = true;
-
 	if(key == 'o') keyStates[key] = true;
 	if(key == 'l') keyStates[key] = true;
-
 	if(key == 'z') keyStates[key] = true;
-	
+	if(key == 'q') keyStates[key] = true;	
 	switch(key){
 		case 27:
 			glutDestroyWindow (0);
 			exit(0);
-			break;
-		case '1':
-			ballSpeed=1;			
-			break;
-		case '5':
-			ballSpeed=10;
 			break;
 	}
 }
@@ -115,11 +98,10 @@ void keyPressed(unsigned char key, int x, int y){
 void keyUp(unsigned char key, int x, int y){
 	if(key == 'w') keyStates[key] = false;
 	if(key == 's') keyStates[key] = false;
-
 	if(key == 'o') keyStates[key] = false;
 	if(key == 'l') keyStates[key] = false;
-
 	if(key == 'z') keyStates[key] = false;
+	if(key == 'q') keyStates[key] = false;
 }
 
 void keyOperations(void){
@@ -138,11 +120,9 @@ void keyOperations(void){
 	if(keyStates['z']){
 		ballColor=black;
 	}
-}
-void update(int value){
-	updateBall();
-	glutPostRedisplay();
-	glutTimerFunc(intervalT, update, 0);
+	if(keyStates['q']){
+		p1.paddlePos = v1.y;
+	}
 }
 
 void drawText(float x, float y, std::string text) {
@@ -170,6 +150,18 @@ void centerLine(float x, float y){
 	glEnd();
 }
 
+void paddle(float x, float y, float trans, float pos){
+	glColor3f(white,white,white);
+	glBegin(GL_QUADS);
+		glVertex2f(-x+trans,y+pos);
+		glVertex2f(x+trans,y+pos);
+		glVertex2f(x+trans,-y+pos);
+		glVertex2f(-x+trans,-y+pos);
+	glEnd();
+	paddleXsize = x;
+	paddleYsize = y;
+}
+
 void ball(){
 	glColor3f(ballColor,ballColor,ballColor);
 	glBegin(GL_POLYGON);
@@ -184,17 +176,17 @@ void updateBall(){
 	v1.x += ballXDir * ballSpeed;
 	v1.y += ballYDir * ballSpeed;
 
+	if(ballYDir < 0.5f){
+		ballYDir = (rand() % 10 + 5)/10;
+	}else if (ballYDir > 0.5f){
+		ballYDir = -((rand() % 10 + 5)/10);
+	}
+
 	if(v1.x == paddlelX+paddleXsize+ballAxis && v1.y >= p1.paddlePos - paddleYsize && v1.y <= p1.paddlePos + paddleYsize){
 		ballXDir*=-1;
 		if(v1.y < p1.paddlePos && v1.y > p1.paddlePos-paddleYsize){
 			ballYDir = (rand() % 10 + 5)/10;
 		}else if (v1.y > p1.paddlePos && v1.y < p1.paddlePos+paddleYsize){
-			ballYDir = -((rand() % 10 + 5)/10);
-		}
-
-		if(ballYDir < 0.5f){
-			ballYDir = (rand() % 10 + 5)/10;
-		}else if (ballYDir > 0.5f){
 			ballYDir = -((rand() % 10 + 5)/10);
 		}
 	}
@@ -206,13 +198,6 @@ void updateBall(){
 		}else if (v1.y > p2.paddlePos && v1.y < p2.paddlePos+paddleYsize){
 			ballYDir = -((rand() % 10 + 5)/10);
 		}
-
-		if(ballYDir < 0.5f){
-			ballYDir = (rand() % 10 + 5)/10;
-		}else if (ballYDir > 0.5f){
-			ballYDir = -((rand() % 10 + 5)/10);
-		}
-
 	}
 
 	if(v1.y > windowH/2-ballAxis){
@@ -231,6 +216,7 @@ void updateBall(){
 		ballXDir = ballXDir*(-1);
 		ballColor=white;
 	}
+
 	if (v1.x > windowW/2-ballAxis){
 		p1.score+=1;
 		v1.x = 0;
@@ -241,17 +227,10 @@ void updateBall(){
 	}
 }
 
-void paddle(float x, float y, float trans, float pos){
-	glColor3f(white,white,white);
-	glBegin(GL_QUADS);
-		glVertex2f(-x+trans,y+pos);
-		glVertex2f(x+trans,y+pos);
-		glVertex2f(x+trans,-y+pos);
-		glVertex2f(-x+trans,-y+pos);
-	glEnd();
-
-	paddleXsize = x;
-	paddleYsize = y;
+void update(int value){
+	updateBall();
+	glutPostRedisplay();
+	glutTimerFunc(intervalT, update, 0);
 }
 
 void draw_elements(){
@@ -265,16 +244,13 @@ void draw_elements(){
 			glTranslatef(v1.x,v1.y,0);
 			ball();
 		glPopMatrix();
-
 		paddle(10,60,paddlelX,p1.paddlePos);
 		paddle(10,60,paddlerX,p2.paddlePos);
 
 		if((p1.score==10)||(p2.score==10)){
-			usleep(100000);
 			glutDestroyWindow(0);
 			exit(0);
 		}
-
 		glutPostRedisplay();
 	glPopMatrix();
 }
@@ -282,23 +258,17 @@ void draw_elements(){
 void display(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
 	keyOperations();
-
 	glClearColor(black,black,black,white);
 	glClear(GL_COLOR_BUFFER_BIT);
-
 	glViewport(0,0,windowW, windowH);
 	draw_elements();
-
 	glFlush();
 }
 
 void screen(GLsizei w, GLsizei h){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
 	gluOrtho2D(0, windowW, 0, windowH);
 	glMatrixMode(GL_MODELVIEW);
-
 }
