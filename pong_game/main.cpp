@@ -6,8 +6,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<sstream>
-#include<SOIL/SOIL.h>
-#include <unistd.h>
+#include<unistd.h>
+#include<curses.h> 
 
 #define windowH 900
 #define windowW 1600
@@ -47,7 +47,6 @@ float paddleSpeed = 1.5;
 float black = 0.0f;
 float white = 1.0f;
 float ballColor = white;
-float grey = 0.5f;
 
 //Variables for ball colision
 
@@ -84,7 +83,6 @@ int main(int argc, char** argv){
 	glutDisplayFunc(display);
 	glutKeyboardFunc(keyPressed);
 	glutKeyboardUpFunc(keyUp);
-	glutPassiveMotionFunc(mouseMovement);
 	glutTimerFunc(intervalT, update, 0);
 	glutMainLoop();
 
@@ -109,7 +107,7 @@ void keyPressed(unsigned char key, int x, int y){
 			ballSpeed=1;			
 			break;
 		case '5':
-			ballSpeed=5;
+			ballSpeed=10;
 			break;
 	}
 }
@@ -141,12 +139,7 @@ void keyOperations(void){
 		ballColor=black;
 	}
 }
-
-void mouseMovement(int x, int y){
-}
-
 void update(int value){
-	//keyboard();
 	updateBall();
 	glutPostRedisplay();
 	glutTimerFunc(intervalT, update, 0);
@@ -162,6 +155,10 @@ std::string int2str(int x){
 	std::stringstream ss;
 	ss << x;
 	return ss.str( );
+}
+
+void scoreText(){
+	drawText(-22,-420, int2str(p1.score) + " : " + int2str(p2.score));
 }
 
 void centerLine(float x, float y){
@@ -181,17 +178,7 @@ void ball(){
 			glVertex2f(cos(ang)*ballAxis,sin(ang)*ballAxis);
 		}
 	glEnd();
-}
-
-void vec2_norm(float& x, float &y) {
-        // sets a vectors length to 1 (which means that x + y == 1)
-        float length = sqrt((x * x) + (y * y));
-        if (length != 0.0f) {
-            length = 1.0f / length;
-            x *= length;
-            y *= length;
-        }
-    }	
+}	
 
 void updateBall(){
 	v1.x += ballXDir * ballSpeed;
@@ -199,15 +186,31 @@ void updateBall(){
 
 	if(v1.x == paddlelX+paddleXsize+ballAxis && v1.y >= p1.paddlePos - paddleYsize && v1.y <= p1.paddlePos + paddleYsize){
 		ballXDir*=-1;
-		if((v1.y < p1.paddlePos && v1.y > p1.paddlePos-paddleYsize)||(v1.y > p1.paddlePos && v1.y < p1.paddlePos+paddleYsize)){
-			ballYDir=-(p1.paddlePos/paddleYsize);
+		if(v1.y < p1.paddlePos && v1.y > p1.paddlePos-paddleYsize){
+			ballYDir = (rand() % 10 + 5)/10;
+		}else if (v1.y > p1.paddlePos && v1.y < p1.paddlePos+paddleYsize){
+			ballYDir = -((rand() % 10 + 5)/10);
+		}
+
+		if(ballYDir < 0.5f){
+			ballYDir = (rand() % 10 + 5)/10;
+		}else if (ballYDir > 0.5f){
+			ballYDir = -((rand() % 10 + 5)/10);
 		}
 	}
 
 	if(v1.x == paddlerX-paddleXsize-ballAxis && v1.y >= p2.paddlePos - paddleYsize && v1.y <= p2.paddlePos + paddleYsize){
 		ballXDir*=-1;
-		if((v1.y < p2.paddlePos && v1.y > p2.paddlePos-paddleYsize)||(v1.y > p2.paddlePos && v1.y < p2.paddlePos+paddleYsize)){
-			ballYDir=-(p1.paddlePos/paddleYsize);
+		if(v1.y < p2.paddlePos && v1.y > p2.paddlePos-paddleYsize){
+			ballYDir = (rand() % 10 + 5)/10;
+		}else if (v1.y > p2.paddlePos && v1.y < p2.paddlePos+paddleYsize){
+			ballYDir = -((rand() % 10 + 5)/10);
+		}
+
+		if(ballYDir < 0.5f){
+			ballYDir = (rand() % 10 + 5)/10;
+		}else if (ballYDir > 0.5f){
+			ballYDir = -((rand() % 10 + 5)/10);
 		}
 
 	}
@@ -236,8 +239,6 @@ void updateBall(){
 		ballXDir = ballXDir*(-1);
 		ballColor=white;
 	}
-
-	//vec2_norm(ballXDir, ballYDir);
 }
 
 void paddle(float x, float y, float trans, float pos){
@@ -253,44 +254,15 @@ void paddle(float x, float y, float trans, float pos){
 	paddleYsize = y;
 }
 
-void gameOverScreen(){
-	GLuint tex_2d = SOIL_load_OGL_texture
-	(
-		"tv_mask_bezel.png",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-		);
-
-		if(0==tex_2d){
-		printf("Error: '%s'\n", SOIL_last_result() );
-		}
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, tex_2d);
-		glBegin(GL_QUADS);
-		glTexCoord2f(1,1);	glVertex2f(800,450);
-		glTexCoord2f(1,0);	glVertex2f(800,-450);
-		glTexCoord2f(0,0);	glVertex2f(-800,-450);
-		glTexCoord2f(0,1);	glVertex2f(-800,450);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-}
-
-void scoreText(){
-	drawText(-22,-420, int2str(p1.score) + " : " + int2str(p2.score));
-}
-
 void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
-		//gameOverScreen();
 		glScalef(scaleTV,-(scaleTV),scaleTV);
 		scoreText();
 		centerLine(0,440);
 		glPushMatrix();
 			glTranslatef(v1.x,v1.y,0);
-			//ballColor=white;
 			ball();
 		glPopMatrix();
 
@@ -298,7 +270,7 @@ void draw_elements(){
 		paddle(10,60,paddlerX,p2.paddlePos);
 
 		if((p1.score==10)||(p2.score==10)){
-			gameOverScreen();
+			usleep(100000);
 			glutDestroyWindow(0);
 			exit(0);
 		}

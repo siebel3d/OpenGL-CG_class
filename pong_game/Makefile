@@ -9,7 +9,7 @@ CC = g++ -std=c++11
 COMPILER_FLAGS = -Wall
 
 # LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSOIL -lGL -lGLU -lglut -lGLEW -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor
+LINKER_FLAGS = -lSOIL -lGL -lGLU -lglut -lGLEW -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lncurses
 
 # OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = main
