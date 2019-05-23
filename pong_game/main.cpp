@@ -10,6 +10,7 @@
 
 #define windowH 900
 #define windowW 1600
+
 float PI = atanf(1.0f)*4.0f;
 
 struct Vertices{
@@ -46,11 +47,11 @@ float ballColor = white;
 //Variables for ball colision
 float ballXDir=-1.0f;
 float ballYDir=0.0f;
-float ballSpeed=10;
+float ballSpeed=2;
 
 //Variables for game scale
 float scaleTV = 1;
-int intervalT= 1000/60;
+int intervalT= 1000/500;
 
 void display(void);
 void screen(GLsizei w, GLsizei h);
@@ -176,26 +177,28 @@ void updateBall(){
 	v1.x += ballXDir * ballSpeed;
 	v1.y += ballYDir * ballSpeed;
 
-	if(ballYDir < 0.5f){
+	if(ballYDir < 0.5f && ballYDir > -0.5f){
 		ballYDir = (rand() % 10 + 5)/10;
-	}else if (ballYDir > 0.5f){
-		ballYDir = -((rand() % 10 + 5)/10);
 	}
 
 	if(v1.x == paddlelX+paddleXsize+ballAxis && v1.y >= p1.paddlePos - paddleYsize && v1.y <= p1.paddlePos + paddleYsize){
 		ballXDir*=-1;
-		if(v1.y < p1.paddlePos && v1.y > p1.paddlePos-paddleYsize){
+		if(v1.y < p1.paddlePos && v1.y < p1.paddlePos-paddleYsize){
 			ballYDir = (rand() % 10 + 5)/10;
-		}else if (v1.y > p1.paddlePos && v1.y < p1.paddlePos+paddleYsize){
+		}
+		if (v1.y > p1.paddlePos && v1.y > p1.paddlePos+paddleYsize){
 			ballYDir = -((rand() % 10 + 5)/10);
 		}
+
+		
 	}
 
 	if(v1.x == paddlerX-paddleXsize-ballAxis && v1.y >= p2.paddlePos - paddleYsize && v1.y <= p2.paddlePos + paddleYsize){
 		ballXDir*=-1;
-		if(v1.y < p2.paddlePos && v1.y > p2.paddlePos-paddleYsize){
+		if(v1.y < p2.paddlePos && v1.y < p2.paddlePos-paddleYsize){
 			ballYDir = (rand() % 10 + 5)/10;
-		}else if (v1.y > p2.paddlePos && v1.y < p2.paddlePos+paddleYsize){
+		}
+		if (v1.y > p2.paddlePos && v1.y > p2.paddlePos+paddleYsize){
 			ballYDir = -((rand() % 10 + 5)/10);
 		}
 	}
