@@ -77,7 +77,7 @@ void display(){
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, alto_brilho);
 	glMaterialfv(GL_FRONT, GL_EMISSION, padrao);
-	glutSolidTorus(0.5, 1, 10, 10);
+	glutSolidTorus(0.5, 1, 20, 20);
 	//glutSolidCube(2);
 	//glutSolidSphere();
 	//glutSolidDodecahedron();

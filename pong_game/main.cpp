@@ -8,6 +8,7 @@
 #include<sstream>
 #include<unistd.h>
 
+//Window size
 #define windowH 900
 #define windowW 1600
 
@@ -28,7 +29,7 @@ struct Player p2;
 struct Vertices v1;
 
 //Variables for circle drawing
-GLfloat circ_pnt = 100;
+GLfloat circ_pnt = 10;
 GLfloat ang, ballAxis=10;
 
 //Paddle variables;
@@ -171,7 +172,7 @@ void ball(){
 			glVertex2f(cos(ang)*ballAxis,sin(ang)*ballAxis);
 		}
 	glEnd();
-}	
+}
 
 void updateBall(){
 	v1.x += ballXDir * ballSpeed;
@@ -183,6 +184,7 @@ void updateBall(){
 
 	if(v1.x == paddlelX+paddleXsize+ballAxis && v1.y >= p1.paddlePos - paddleYsize && v1.y <= p1.paddlePos + paddleYsize){
 		ballXDir*=-1;
+		printf("\a\n");
 		if(v1.y < p1.paddlePos && v1.y < p1.paddlePos-paddleYsize){
 			ballYDir = (rand() % 10 + 5)/10;
 		}
@@ -195,6 +197,7 @@ void updateBall(){
 
 	if(v1.x == paddlerX-paddleXsize-ballAxis && v1.y >= p2.paddlePos - paddleYsize && v1.y <= p2.paddlePos + paddleYsize){
 		ballXDir*=-1;
+		printf("\a\n");
 		if(v1.y < p2.paddlePos && v1.y < p2.paddlePos-paddleYsize){
 			ballYDir = (rand() % 10 + 5)/10;
 		}
@@ -205,10 +208,12 @@ void updateBall(){
 
 	if(v1.y > windowH/2-ballAxis){
 		ballYDir = ballYDir*(-1);
+		printf("\a\n");
 	}
 
 	if(v1.y < -(windowH/2-ballAxis)){
 		ballYDir = ballYDir*(-1);
+		printf("\a\n");
 	}
 
 	if (v1.x < -(windowW/2-ballAxis)){
