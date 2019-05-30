@@ -7,6 +7,7 @@
 #define janela_largura 640
 
 int on=1;
+int onb=0;
 
 float x=0.0, y=0.0, z=0.0;
 
@@ -14,6 +15,7 @@ void reshape(GLsizei largura, GLsizei altura);
 void display();
 void keyboard(unsigned char key, int a, int b);
 void conf_luz();
+void conf_luz_b();
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv); // Ligar GLUT
@@ -22,6 +24,7 @@ int main(int argc, char** argv){
 	glutInitWindowPosition(50, 50); // Pos. onde surge a janela
 	glutCreateWindow("iluminacao"); // Criar Janela
 	conf_luz(); // configuração de luz
+	conf_luz_b();
 	glutDisplayFunc(display); // imagem
 	glutReshapeFunc(reshape); // config telas
 	glutKeyboardFunc (keyboard); // funcoes de teclado
@@ -46,6 +49,25 @@ void conf_luz(void){
 	glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, local_view);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+}
+
+void conf_luz_b(void){
+	float bambiente[] = { 0.0, 0.0, 0.0, 1.0 };
+	float bdiffuse[] = { 0.0, 0.0, 1.0, 1.0 };
+	float bspecular[] = { 0.0, 0.0, 1.0, 1.0 };
+	float bposicao[] = { 5.0+sin(x*2*3.14/360), 5.0, 2.0+sin(x*2*3.14/360), 0.0 };
+	float blmodel_ambiente[] = { 0.4, 0.4, 0.4, 1.0 };
+	float blocal_view[] = { 0.0 };
+	glClearColor(0.0, 0.1, 0.1, 0.0);
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_SMOOTH);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, bambiente);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, bdiffuse);
+	glLightfv(GL_LIGHT1, GL_POSITION, bposicao);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, blmodel_ambiente);
+	glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, blocal_view);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT1);
 }
 
 void reshape(GLsizei largura, GLsizei altura){
@@ -82,6 +104,10 @@ void display(){
 	//glutSolidSphere();
 	//glutSolidDodecahedron();
 	//glutSolidTeapot();
+	glPushMatrix();
+		glTranslatef(3.0f,0.0f, -3.0f);
+		glutSolidCube(2);
+	glPopMatrix();
 	glutSwapBuffers(); // trocar a matriz da tela por esta aqui.
 }
 
@@ -90,17 +116,22 @@ void keyboard(unsigned char key, int a, int b){
 	{
 		case 'x':
 			x+=10.0;
-			conf_luz();
+			if(on==1)conf_luz();
+			if(onb==1)conf_luz_b();
 			glutPostRedisplay();
 			break;
 		case 'o':
-			if (on){
+			if (on==1 || onb==0){
 				glDisable(GL_LIGHT0);
+				glEnable(GL_LIGHT1);
 				on=0;
+				onb=1;
 			}
-			else{
+			else if (on==0 || onb==1){
 				glEnable(GL_LIGHT0);
+				glDisable(GL_LIGHT1);
 				on=1;
+				onb=0;
 			}
 			glutPostRedisplay();
 			break;
