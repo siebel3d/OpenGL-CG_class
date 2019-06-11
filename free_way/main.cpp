@@ -84,12 +84,54 @@ int main(int argc, char** argv){
 	return(0);
 }
 
-void laneSection(int x, int y){
-	
+void laneStrip(int posX, int posY, int sizeX, int sizeY, int r, int g, int b){
+	glPushMatrix();
+		glTranslatef(posX, posY, 0);
+		glColor3ub(r,g,b);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/4), -(sizeY/16));
+			glVertex2f(-(sizeX/4), sizeY/16);
+			glVertex2f(sizeX/4, sizeY/16);
+			glVertex2f(sizeX/4, -(sizeY/16));
+		glEnd();
+	glPopMatrix();
 }
 
-void road(){
+void laneSection(int sizeX, int sizeY, int laneNum){
+	int posX=0, posY=0;
+	//posX= sectionNum*sizeX;
+	posY= laneNum*(sizeY-1);
+	glPushMatrix();
+		glTranslatef(posX, posY, 0);
+		glColor3ub(130,130,130);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/2), -(sizeY/2));
+			glVertex2f(-(sizeX/2), sizeY/2);
+			glVertex2f(sizeX/2, sizeY/2);
+			glVertex2f(sizeX/2, -(sizeY/2));
+		glEnd();
+		if(laneNum!=4){
+			laneStrip((sizeX/4), (sizeY/2)-4, sizeX, sizeY, 255, 255, 255);
+		}
+		if(laneNum==4){
+			laneStrip((sizeX/4), (sizeY/2)-4, sizeX, sizeY, 226, 165, 9);
+		}
+		
+	glPopMatrix();
+}
 
+void roadLanes(int sizeX, int totalLanes){
+	int auxPos=(totalLanes*75)/2;
+	glPushMatrix();
+	glTranslatef(0,-auxPos,0);
+		for(int i=1; i<=totalLanes; i++){
+			laneSection(80,75,i);
+		}
+	glPopMatrix();
+}
+
+void roadSections(int sizeY, int totalSections){
+	//posX= sectionNum*sizeX;
 }
 
 void keyPressed(unsigned char key, int x, int y){
@@ -165,9 +207,9 @@ void draw_elements(){
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
-		glScalef(scaleTV,-(scaleTV),scaleTV);
+		glScalef(scaleTV,-scaleTV,scaleTV);
 		screenText();
-
+		roadLanes(80,10);
 		if((p1.score==10)||(p2.score==10)){
 			glutDestroyWindow(0);
 			exit(0);
