@@ -98,7 +98,7 @@ void laneStrip(int posX, int posY, int sizeX, int sizeY, int r, int g, int b){
 }
 
 void laneSection(int sizeX, int sizeY, int laneNum){
-	int posY= laneNum*(sizeY-1);
+	int posY= (laneNum*sizeY);
 	glPushMatrix();
 		glTranslatef(0, posY, 0);
 		glColor3ub(80,80,80);
@@ -108,39 +108,48 @@ void laneSection(int sizeX, int sizeY, int laneNum){
 			glVertex2f(sizeX/2, sizeY/2);
 			glVertex2f(sizeX/2, -(sizeY/2));
 		glEnd();
-		if((laneNum!=5)&&(laneNum!=10)){
-			laneStrip((sizeX/4), (sizeY/2)-4, sizeX, sizeY, 255, 255, 255);
-		}
-		if(laneNum==5){
-			laneStrip((sizeX/4), (sizeY/2)-4, sizeX, sizeY, 226, 165, 9);
-		}
+
+		if(laneNum==1){
+			laneStrip((sizeX/4), sizeY/2, sizeX, sizeY/2, 255, 255, 255);
+		}else if(laneNum==10){
+			laneStrip((sizeX/4), -(sizeY/2), sizeX, sizeY/2, 255, 255, 255);
+		}else if(laneNum==6){
+			laneStrip((sizeX/4), -(sizeY/2), sizeX, sizeY/2, 226, 165, 9);
+			laneStrip((sizeX/4), sizeY/2, sizeX, sizeY/2, 255, 255, 255);
+		}else if(laneNum==7){
+			laneStrip((sizeX/4), -(sizeY/2), sizeX, sizeY/2, 255, 255, 255);
+			laneStrip((sizeX/4), sizeY/2, sizeX, sizeY/2, 226, 165, 9);
+		}else{
+			laneStrip((sizeX/4), -(sizeY/2), sizeX, sizeY/2, 255, 255, 255);
+			laneStrip((sizeX/4), sizeY/2, sizeX, sizeY/2, 255, 255, 255);
+		}		
 		
 	glPopMatrix();
 }
 
 void roadLanes(int sizeX, int sizeY, int totalLanes, int sectionNum){
 	int posX=sectionNum*sizeX;
-	int auxPos=(totalLanes*sizeY)/2;
+	int auxPos=((totalLanes*sizeY)/2)+sizeY/2;
 	glPushMatrix();
-	glTranslatef(posX, -auxPos,0);
+		glTranslatef(posX, -auxPos,0);
 		for(int i=1; i<=totalLanes; i++){
 			laneSection(sizeX,sizeY,i);
 		}
 	glPopMatrix();
 }
 
-void roadSections(int sizeX, int sizeY, int totalSections){
+void roadSections(int sizeX, int sizeY, int totalLanes, int totalSections){
 	int auxPos=(totalSections*sizeX)/2;
 	glPushMatrix();
-	glTranslatef(-auxPos,0,0);
+		glTranslatef(-auxPos,0,0);
 		for(int i=1; i<=totalSections; i++){
-			roadLanes(sizeX,sizeY,10,i);
+			roadLanes(sizeX,sizeY,totalLanes,i);
 		}
 	glPopMatrix();
 }
 
 void map(){
-	roadSections(80,65,22);
+	roadSections(80,70,10,22);
 }
 
 void keyPressed(unsigned char key, int x, int y){
@@ -219,6 +228,12 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		screenText();
 		map();
+		glColor3ub(255,0,0);
+		glBegin(GL_LINES);
+    		glVertex2f(-windowW/2,0);
+    		glVertex2f(windowW/2,0);
+		glEnd();
+
 		if((p1.score==10)||(p2.score==10)){
 			glutDestroyWindow(0);
 			exit(0);
