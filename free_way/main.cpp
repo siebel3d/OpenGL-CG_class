@@ -148,8 +148,71 @@ void roadSections(int sizeX, int sizeY, int totalLanes, int totalSections){
 	glPopMatrix();
 }
 
-void map(){
-	roadSections(80,70,10,22);
+void sidewalk(int sizeX, int sizeY, int laneNum, int sectionNum){
+	int posX=0, posY=0;
+	if(laneNum<0){
+		posY= (laneNum*sizeY)-sizeY/3;
+	}
+	if(laneNum>0){
+		posY= (laneNum*sizeY)+sizeY/3;
+	}
+	posX=sectionNum*sizeX;
+	
+	glPushMatrix();
+		glTranslatef(posX, posY, 0);
+		glColor3ub(20,20,20);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/2), -sizeY/3);
+			glVertex2f(-(sizeX/2), sizeY/3);
+			glVertex2f(sizeX/2, sizeY/3);
+			glVertex2f(sizeX/2, -sizeY/3);
+		glEnd();
+		glColor3ub(181,174,157);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/2), -((sizeY/3)-sizeY/16));
+			glVertex2f(-(sizeX/2), (sizeY/3)-sizeY/16);
+			glVertex2f(sizeX/2, (sizeY/3)-sizeY/16);
+			glVertex2f(sizeX/2, -((sizeY/3)-sizeY/16));
+		glEnd();
+	glPopMatrix();
+}
+
+void sidewalkSections(int sizeX, int sizeY, int laneNumA, int laneNumB, int totalSections){
+	int auxPos=(totalSections*sizeX)/2;
+	glPushMatrix();
+		glTranslatef(-auxPos,0,0);
+		for(int i=1; i<=totalSections; i++){
+			sidewalk(sizeX,sizeY,laneNumA,i);
+			sidewalk(sizeX,sizeY,laneNumB,i);
+		}
+	glPopMatrix();
+}
+
+void postSidewalk(int sizeY, int laneNumC){
+	int posY=0;
+	if(laneNumC<0){
+		posY= ((laneNumC+1)*sizeY)-sizeY;
+	}
+	if(laneNumC>0){
+		posY= ((laneNumC-1)*sizeY)+sizeY;
+	}
+	
+	glPushMatrix();
+		glTranslatef(0, posY, 0);
+		glColor3ub(130,130,130);
+		glBegin(GL_QUADS);
+			glVertex2f(-(windowW/2), -sizeY/2);
+			glVertex2f(-(windowW/2), sizeY/3);
+			glVertex2f(windowW/2, sizeY/3);
+			glVertex2f(windowW/2, -sizeY/2);
+		glEnd();
+	glPopMatrix();
+}
+
+void map(int sizeX, int sizeY, int totalLanes, int totalSections, int laneNumA, int laneNumB, int laneNumC){
+	roadSections(sizeX,sizeY,totalLanes,totalSections);
+	sidewalkSections(sizeX,sizeY,laneNumA,laneNumB,totalSections);
+	postSidewalk(sizeY,laneNumC);
 }
 
 void keyPressed(unsigned char key, int x, int y){
@@ -205,9 +268,9 @@ std::string int2str(int x){
 }
 
 void screenText(){
-	drawText(-(windowW/4),-420, 1, int2str(p1.score), 255, 255, 255);
-	drawText(windowW/4,-420, 1, int2str(p2.score), 255, 255, 255);
-	drawText(-(windowW/2)+200, 420, 2, "S3D", 226,114,9);
+	drawText(-(windowW/4),-420, 1, int2str(p1.score), 255, 130, 130);
+	drawText(windowW/4,-420, 1, int2str(p2.score), 255, 130, 130);
+	drawText(-(windowW/2)+200, 420, 2, "SIEBEL3D", 226,114,9);
 }
 
 
@@ -226,9 +289,10 @@ void draw_elements(){
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
 		glScalef(scaleTV,-scaleTV,scaleTV);
+		map(80,70,10,22,5,-5,-6);
 		screenText();
-		map();
 		glColor3ub(255,0,0);
+		
 		glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
     		glVertex2f(windowW/2,0);
