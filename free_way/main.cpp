@@ -259,8 +259,17 @@ void carComplete(int sizeX, int sizeY, int r, int g, int b){
 	glPopMatrix();
 }
 
-void carController(){
+void carController(int sizeX, int sizeY, int laneNum, int laneSize, int speed, const char* carNumber){
+	int posX=0, posY=0;
 
+	if(carNumber=="c1"){
+		c1.sizeX = sizeX;
+		c1.sizeY = sizeY;
+		c1.laneNum = laneNum;
+		c1.speed = speed;
+		c1.posX = stepX*c1.speed;
+		c1.posY = laneNum*laneSize;
+	}
 }
 
 void keyPressed(unsigned char key, int x, int y){
@@ -339,7 +348,8 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
-		car(80,45,255,130,130);
+		//car(80,45,255,130,130);
+		carController(80,70,1,10,"c1");
 		glColor3ub(255,0,0);
 		glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
