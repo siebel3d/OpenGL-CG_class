@@ -20,6 +20,7 @@ struct Car{
 	int speed;
 	int sizeX;
 	int sizeY;
+	int laneNum;
 };
 
 struct Player{
@@ -29,6 +30,10 @@ struct Player{
 	int sizeX;
 	int sizeY;
 	int laneFlag;
+	int r;
+	int g;
+	int b;
+
 };
 
 struct Player p1;
@@ -47,10 +52,6 @@ struct Car c10;
 //Variables for circle drawing
 GLfloat circ_pnt = 10;
 GLfloat ang, ballAxis=10;
-
-//Colors
-float black = 0.0f;
-float white = 1.0f;
 
 //Variables for game scale
 float scaleTV = 1;
@@ -215,6 +216,53 @@ void map(int sizeX, int sizeY, int totalLanes, int totalSections, int laneNumA, 
 	postSidewalk(sizeY,laneNumC);
 }
 
+void carParts(int sizeX, int sizeY, int posX, int posY, int r, int g, int b){
+	glColor3ub(r,g,b);
+		glPushMatrix();
+		glTranslatef(posX, posY, 0);
+		glBegin(GL_QUADS);
+			glVertex2f(-sizeX,-sizeY);
+			glVertex2f(-sizeX,sizeY);
+			glVertex2f(sizeX,sizeY);
+			glVertex2f(sizeX,-sizeY);
+		glEnd();
+		glPopMatrix();
+}
+
+void carComplete(int sizeX, int sizeY, int r, int g, int b){
+	glPushMatrix();
+		glColor3ub(r,g,b);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/2), -(sizeY/2));
+			glVertex2f(-(sizeX/2), sizeY/2);
+			glVertex2f(sizeX/2, sizeY/2);
+			glVertex2f(sizeX/2, -(sizeY/2));
+		glEnd();
+		glBegin(GL_QUADS);
+			glVertex2f(sizeX/2,-(sizeY/3));
+			glVertex2f(sizeX/2,sizeY/3);
+			glVertex2f(sizeX/2+sizeX/8,sizeY/3);
+			glVertex2f(sizeX/2+sizeX/8,-sizeY/3);
+		glEnd();
+
+		carParts(sizeX/8,sizeY/4,20,0,130,130,255);		//windshield
+		carParts(sizeX/10,sizeY/4,-20,0,130,130,255);	//rear window
+		carParts(sizeX/7,sizeY/14,-1,14,130,130,255);	//right window
+		carParts(sizeX/7,sizeY/14,-1,-14,130,130,255);	//left window
+
+		carParts(sizeX/8,sizeY/15,27,25,20,20,20);
+		carParts(sizeX/8,sizeY/15,27,-25,20,20,20);
+		carParts(sizeX/8,sizeY/15,-27,25,20,20,20);
+		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);		
+
+
+	glPopMatrix();
+}
+
+void carController(){
+
+}
+
 void keyPressed(unsigned char key, int x, int y){
 	if(key == 'w') keyStates[key] = true;
 	if(key == 's') keyStates[key] = true;
@@ -291,8 +339,8 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
+		car(80,45,255,130,130);
 		glColor3ub(255,0,0);
-		
 		glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
     		glVertex2f(windowW/2,0);
@@ -310,7 +358,7 @@ void display(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	keyOperations();
-	glClearColor(black,black,black,white);
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0,0,windowW, windowH);
 	draw_elements();
