@@ -5,6 +5,7 @@
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<sstream>
 #include<unistd.h>
 
@@ -17,7 +18,7 @@ float PI = atanf(1.0f)*4.0f;
 struct Car{
 	int posX;
 	int posY;
-	int speed;
+	float speed;
 	int sizeX;
 	int sizeY;
 	int laneNum;
@@ -52,6 +53,10 @@ struct Car c10;
 //Variables for circle drawing
 GLfloat circ_pnt = 10;
 GLfloat ang, ballAxis=10;
+
+//Variables for animation
+float stepR = 1.0f;
+float stepL = -1.0f;
 
 //Variables for game scale
 float scaleTV = 1;
@@ -232,6 +237,7 @@ void carParts(int sizeX, int sizeY, int posX, int posY, int r, int g, int b){
 void carComplete(int sizeX, int sizeY, int r, int g, int b){
 	glPushMatrix();
 		glColor3ub(r,g,b);
+		//body
 		glBegin(GL_QUADS);
 			glVertex2f(-(sizeX/2), -(sizeY/2));
 			glVertex2f(-(sizeX/2), sizeY/2);
@@ -244,32 +250,179 @@ void carComplete(int sizeX, int sizeY, int r, int g, int b){
 			glVertex2f(sizeX/2+sizeX/8,sizeY/3);
 			glVertex2f(sizeX/2+sizeX/8,-sizeY/3);
 		glEnd();
-
+		//windows
 		carParts(sizeX/8,sizeY/4,20,0,130,130,255);		//windshield
 		carParts(sizeX/10,sizeY/4,-20,0,130,130,255);	//rear window
 		carParts(sizeX/7,sizeY/14,-1,14,130,130,255);	//right window
 		carParts(sizeX/7,sizeY/14,-1,-14,130,130,255);	//left window
-
+		//Wheels
 		carParts(sizeX/8,sizeY/15,27,25,20,20,20);
 		carParts(sizeX/8,sizeY/15,27,-25,20,20,20);
 		carParts(sizeX/8,sizeY/15,-27,25,20,20,20);
-		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);		
+		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);
+
+		/*glColor3ub(255,0,0);
+		glBegin(GL_QUADS);
+			glVertex2f(-(sizeX/2), -(sizeY/2));
+			glVertex2f(-(sizeX/2), sizeY/2);
+			glVertex2f(sizeX/2+sizeX/8, sizeY/2);
+			glVertex2f(sizeX/2+sizeX/8, -(sizeY/2));
+		glEnd();*/
 
 
 	glPopMatrix();
 }
 
-void carController(int sizeX, int sizeY, int laneNum, int laneSize, int speed, const char* carNumber){
-	int posX=0, posY=0;
+void carController(int sizeX, int sizeY, int laneSize, float speed, const char* carNumber){
+	int rLimit = (windowW/2)+(sizeX*2);
+	int lLimit = -rLimit;
 
-	if(carNumber=="c1"){
+	if(strcmp(carNumber,"c1")==0){
 		c1.sizeX = sizeX;
 		c1.sizeY = sizeY;
-		c1.laneNum = laneNum;
 		c1.speed = speed;
-		c1.posX = stepX*c1.speed;
-		c1.posY = laneNum*laneSize;
+		c1.posY = (5*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		if(c1.posX==rLimit)
+			c1.posX=lLimit;
+		glTranslatef(c1.posX,c1.posY,0);
+		carComplete(sizeX, sizeY, 255, 50, 50);
+		glPopMatrix();
 	}
+
+	if(strcmp(carNumber,"c2")==0){
+		c2.sizeX = sizeX;
+		c2.sizeY = sizeY;
+		c2.speed = speed;
+		c2.posY = (4*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		if(c2.posX==rLimit)
+			c2.posX=lLimit;
+		glTranslatef(c2.posX,c2.posY,0);
+		carComplete(sizeX, sizeY, 244, 206, 66);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c3")==0){
+		c3.sizeX = sizeX;
+		c3.sizeY = sizeY;
+		c3.speed = speed;
+		c3.posY = (3*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		if(c3.posX==rLimit)
+			c3.posX=lLimit;
+		glTranslatef(c3.posX,c3.posY,0);
+		carComplete(sizeX, sizeY, 66, 244, 80);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c4")==0){
+		c4.sizeX = sizeX;
+		c4.sizeY = sizeY;
+		c4.speed = speed;
+		c4.posY = (2*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		if(c4.posX==rLimit)
+			c4.posX=lLimit;
+		glTranslatef(c4.posX,c4.posY,0);
+		carComplete(sizeX, sizeY, 66, 244, 134);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c5")==0){
+		c5.sizeX = sizeX;
+		c5.sizeY = sizeY;
+		c5.speed = speed;
+		c5.posY = (1*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		if(c5.posX==rLimit)
+			c5.posX=lLimit;
+		glTranslatef(c5.posX,c5.posY,0);
+		carComplete(sizeX, sizeY, 150, 66, 190);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c6")==0){
+		c6.sizeX = sizeX;
+		c6.sizeY = sizeY;
+		c6.speed = speed;
+		c6.posY = (0*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		glScalef(-1,1,1);
+		if(c6.posX==lLimit)
+			c6.posX=rLimit;
+		glTranslatef(-c6.posX,c6.posY,0);
+		carComplete(sizeX, sizeY, 244, 149, 66);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c7")==0){
+		c7.sizeX = sizeX;
+		c7.sizeY = sizeY;
+		c7.speed = speed;
+		c7.posY = ((-1)*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		glScalef(-1,1,1);
+		if(c7.posX==lLimit)
+			c7.posX=rLimit;
+		glTranslatef(-c7.posX,c7.posY,0);
+		carComplete(sizeX, sizeY, 255, 130, 255);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c8")==0){
+		c8.sizeX = sizeX;
+		c8.sizeY = sizeY;
+		c8.speed = speed;
+		c8.posY = ((-2)*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		glScalef(-1,1,1);
+		if(c8.posX==lLimit)
+			c8.posX=rLimit;
+		glTranslatef(-c8.posX,c8.posY,0);
+		carComplete(sizeX, sizeY, 130, 255, 255);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c9")==0){
+		c9.sizeX = sizeX;
+		c9.sizeY = sizeY;
+		c9.speed = speed;
+		c9.posY = ((-3)*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		glScalef(-1,1,1);
+		if(c9.posX==lLimit)
+			c9.posX=rLimit;
+		glTranslatef(-c9.posX,c9.posY,0);
+		carComplete(sizeX, sizeY, 80, 100, 100);
+		glPopMatrix();
+	}
+
+	if(strcmp(carNumber,"c10")==0){
+		c10.sizeX = sizeX;
+		c10.sizeY = sizeY;
+		c10.speed = speed;
+		c10.posY = ((-4)*laneSize)-(laneSize/2);
+
+		glPushMatrix();
+		glScalef(-1,1,1);
+		if(c10.posX==lLimit)
+			c10.posX=rLimit;
+		glTranslatef(-c10.posX,c10.posY,0);
+		carComplete(sizeX, sizeY, 130, 130, 130);
+		glPopMatrix();
+	}
+
+
 }
 
 void keyPressed(unsigned char key, int x, int y){
@@ -331,14 +484,23 @@ void screenText(){
 }
 
 
-void updateBall(){
-	
+void updateCars(){
+	c1.posX += stepR*c1.speed;
+	c2.posX += stepR*c2.speed;
+	c3.posX += stepR*c3.speed;
+	c4.posX += stepR*c4.speed;
+	c5.posX += stepR*c5.speed;
+	c6.posX += stepL*c6.speed;
+	c7.posX += stepL*c7.speed;
+	c8.posX += stepL*c8.speed;
+	c9.posX += stepL*c9.speed;
+	c10.posX += stepL*c10.speed;
 }
 
 void update(int value){
-	updateBall();
+	updateCars();
 	glutPostRedisplay();
-	glutTimerFunc(intervalT, update, 0);
+	glutTimerFunc(intervalT, update, 1);
 }
 
 void draw_elements(){
@@ -349,7 +511,16 @@ void draw_elements(){
 		map(80,70,10,22,5,-5,-6);
 		screenText();
 		//car(80,45,255,130,130);
-		carController(80,70,1,10,"c1");
+		carController(80,45,70,1,"c1");
+		carController(80,45,70,2,"c2");
+		carController(80,45,70,3,"c3");
+		carController(80,45,70,4,"c4");
+		carController(80,45,70,5,"c5");
+		carController(80,45,70,5,"c6");
+		carController(80,45,70,4,"c7");
+		carController(80,45,70,3,"c8");
+		carController(80,45,70,2,"c9");
+		carController(80,45,70,1,"c10");
 		glColor3ub(255,0,0);
 		glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
