@@ -260,7 +260,7 @@ void carComplete(int sizeX, int sizeY, int r, int g, int b){
 		carParts(sizeX/8,sizeY/15,27,-25,20,20,20);
 		carParts(sizeX/8,sizeY/15,-27,25,20,20,20);
 		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);
-
+		//Collision Debug
 		/*glColor3ub(255,0,0);
 		glBegin(GL_QUADS);
 			glVertex2f(-(sizeX/2), -(sizeY/2));
@@ -510,7 +510,6 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
-		//car(80,45,255,130,130);
 		carController(80,45,70,1,"c1");
 		carController(80,45,70,2,"c2");
 		carController(80,45,70,3,"c3");
@@ -522,10 +521,11 @@ void draw_elements(){
 		carController(80,45,70,2,"c9");
 		carController(80,45,70,1,"c10");
 		glColor3ub(255,0,0);
-		glBegin(GL_LINES);
+		//Center line debug
+		/*glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
     		glVertex2f(windowW/2,0);
-		glEnd();
+		glEnd();*/
 
 		if((p1.score==10)||(p2.score==10)){
 			glutDestroyWindow(0);
