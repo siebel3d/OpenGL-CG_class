@@ -44,7 +44,6 @@ void mouseMovement(int x, int y);
 
 int main(int argc, char** argv){
 	glutInit(&argc, argv);
-	//glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(windowW, windowH);
 	glutInitWindowPosition(0,0);
