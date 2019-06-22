@@ -425,6 +425,20 @@ void carController(int sizeX, int sizeY, int laneSize, float speed, const char* 
 
 }
 
+void chicken(int scale, int size){
+	glColor3ub(244,223,66);
+	glPushMatrix();
+	glScalef(scale,scale,scale);
+	glBegin(GL_POLYGON);
+		glVertex2f(-size/2, -size/2);
+		glVertex2f(-size/2, 0);
+		glVertex2f(-size, size/2);
+		glVertex2f(size/2, size/2);
+		glVertex2f(size/2, -size/2);
+	glEnd();
+	glPopMatrix();
+}
+
 void keyPressed(unsigned char key, int x, int y){
 	if(key == 'w') keyStates[key] = true;
 	if(key == 's') keyStates[key] = true;
@@ -510,6 +524,7 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
+		chicken(1, 50);
 		carController(80,45,70,1,"c1");
 		carController(80,45,70,2,"c2");
 		carController(80,45,70,3,"c3");
