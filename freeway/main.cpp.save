@@ -422,32 +422,20 @@ void carController(int sizeX, int sizeY, int laneSize, float speed, const char* 
 		glPopMatrix();
 	}
 
-}
 
-void chickenHead(int size){
-	glPushMatrix();
-	glTranslatef(size/2.5,-size/2,0);
-	glBegin(GL_POLYGON);
-		glVertex2f(-size/8, -size/4);
-		glVertex2f(-size/8, size/4);
-		glVertex2f(size/8, size/4);
-		glVertex2f(size/8, -size/4);
-	glEnd();
-	glPopMatrix();
 }
 
 void chicken(int scale, int size){
 	glColor3ub(244,223,66);
 	glPushMatrix();
 	glScalef(scale,scale,scale);
-	glBegin(GL_POLYGON);
+	glBegin(GL_);
+		glVertex2f(-size, -size/2);
 		glVertex2f(-size/2, 0);
 		glVertex2f(-size/2, size/2);
 		glVertex2f(size/2, size/2);
 		glVertex2f(size/2, -size/2);
-		glVertex2f(-size, -size/2);
 	glEnd();
-	chickenHead(50);
 	glPopMatrix();
 }
 
