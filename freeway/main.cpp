@@ -27,7 +27,7 @@ struct Car{
 struct Player{
 	int score;
 	int playerPosX;
-	int playerPosY;
+	int playerPosY = windowH/2+170;
 	int sizeX;
 	int sizeY;
 	int laneFlag;
@@ -57,6 +57,12 @@ GLfloat ang, ballAxis=10;
 //Variables for animation
 float stepR = 1.0f;
 float stepL = -1.0f;
+float chickenStep = 1.0f;
+int legRotL = 15;
+int legRotR = -15;
+
+//Chicken movement
+float chickenSpeed = 1.5;
 
 //Variables for game scale
 float scaleTV = 1;
@@ -261,13 +267,13 @@ void carComplete(int sizeX, int sizeY, int r, int g, int b){
 		carParts(sizeX/8,sizeY/15,-27,25,20,20,20);
 		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);
 		//Collision Debug
-		/*glColor3ub(255,0,0);
+		glColor3ub(255,0,0);
 		glBegin(GL_QUADS);
 			glVertex2f(-(sizeX/2), -(sizeY/2));
 			glVertex2f(-(sizeX/2), sizeY/2);
 			glVertex2f(sizeX/2+sizeX/8, sizeY/2);
 			glVertex2f(sizeX/2+sizeX/8, -(sizeY/2));
-		glEnd();*/
+		glEnd();
 
 
 	glPopMatrix();
@@ -426,28 +432,74 @@ void carController(int sizeX, int sizeY, int laneSize, float speed, const char* 
 
 void chickenHead(int size){
 	glPushMatrix();
-	glTranslatef(size/2.5,-size/2,0);
+	glTranslatef(10,-20,0);
 	glBegin(GL_POLYGON);
 		glVertex2f(-size/8, -size/4);
 		glVertex2f(-size/8, size/4);
 		glVertex2f(size/8, size/4);
 		glVertex2f(size/8, -size/4);
 	glEnd();
+	glPushMatrix();
+	glTranslatef(10,0,0);
+	glColor3ub(255,132,10);
+	glBegin(GL_POLYGON);
+		glVertex2f(-size/8, -size/8);
+		glVertex2f(-size/8, size/8);
+		glVertex2f(size/8, 0);
+	glEnd();
+	glPushMatrix();
+	glColor3ub(10,10,10);
+	glPointSize(5.0f);
+	glTranslatef(-7,-2,0);
+	glBegin(GL_POINTS);
+		glVertex2f(0,0);
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
 	glPopMatrix();
 }
 
-void chicken(int scale, int size){
+void chickenLegs(int size, int angle, float offset){
+	glColor3ub(10,10,10);
+	glPushMatrix();
+	glTranslatef(offset,15,0);
+	glRotatef(angle,0,0,1);
+	glLineWidth(3.0f);
+	glBegin(GL_LINES);
+		glVertex2f(0,0);
+		glVertex2f(0,15);
+	glEnd();
+	glPopMatrix();
+}
+
+void chicken(int scale, int size, float movX, float movY){
+	glPushMatrix();
+	glScalef(0.6,0.6,0.6);
+	glTranslatef(movX,movY,0);
 	glColor3ub(244,223,66);
 	glPushMatrix();
 	glScalef(scale,scale,scale);
 	glBegin(GL_POLYGON);
-		glVertex2f(-size/2, 0);
-		glVertex2f(-size/2, size/2);
-		glVertex2f(size/2, size/2);
-		glVertex2f(size/2, -size/2);
-		glVertex2f(-size, -size/2);
+		glVertex2f(-size/3, 0);
+		glVertex2f(-size/3, size/3);
+		glVertex2f(size/3, size/3);
+		glVertex2f(size/3, -size/3);
+		glVertex2f(-size/1.5, -size/3);
 	glEnd();
-	chickenHead(50);
+
+	chickenHead(size);
+	chickenLegs(size,legRotL, -5);
+	chickenLegs(size,legRotR, 5);
+
+	//Chicken Collision Debug
+	glColor3ub(255,0,0);
+	glBegin(GL_QUADS);
+		glVertex2f(-size/2, -size/1.7);
+		glVertex2f(-size/2, size/1.7);
+		glVertex2f(size/2, size/1.7);
+		glVertex2f(size/2, -size/1.7);
+	glEnd();
+
 	glPopMatrix();
 }
 
@@ -472,18 +524,19 @@ void keyUp(unsigned char key, int x, int y){
 }
 
 void keyOperations(void){
-	/*if((keyStates['w'])&&((p1.paddlePos<=paddleYlimit+paddleSpeed)&&(p1.paddlePos>=-(paddleYlimit+paddleSpeed)))){
-		p1.paddlePos-=paddleSpeed;
+	if(keyStates['w']){
+		p1.playerPosY-=chickenSpeed;
 	}
-	if((keyStates['s'])&&((p1.paddlePos<=paddleYlimit-paddleSpeed)&&(p1.paddlePos<=(paddleYlimit+paddleSpeed)))){
-		p1.paddlePos+=paddleSpeed;
+	if(keyStates['s']){
+		p1.playerPosY+=chickenSpeed;
 	}
-	if((keyStates['o'])&&((p2.paddlePos<=paddleYlimit+paddleSpeed)&&(p2.paddlePos>=-(paddleYlimit+paddleSpeed)))){
-		p2.paddlePos-=paddleSpeed;
+
+	if(keyStates['o']){
+		p2.playerPosY-=chickenSpeed;
 	}
-	if((keyStates['l'])&&((p2.paddlePos<=paddleYlimit-paddleSpeed)&&(p2.paddlePos<=(paddleYlimit+paddleSpeed)))){
-		p2.paddlePos+=paddleSpeed;
-	}*/
+	if(keyStates['l']){
+		p2.playerPosY+=chickenSpeed;
+	}
 }
 
 void drawText(float x, float y, int font, std::string text, int r, int g, int b) {
@@ -523,20 +576,37 @@ void updateCars(){
 	c10.posX += stepL*c10.speed;
 }
 
+void updateChicken(){
+	if(p1.playerPosY==-windowH/2-170){
+		p1.playerPosY=windowH/2+170;
+		p1.score++;
+	}
+
+	if(p2.playerPosY==-windowH/2-170){
+		p2.playerPosY=windowH/2+170;
+		p2.score++;
+	}
+}
+
 void update(int value){
 	updateCars();
+	updateChicken();
 	glutPostRedisplay();
 	glutTimerFunc(intervalT, update, 1);
 }
 
 void draw_elements(){
+	p1.playerPosX = -windowW/2;
+	p2.playerPosX = windowW/2;
+
 	glLoadIdentity();
 	glPushMatrix();
 		glTranslatef((windowW)/2,(windowH)/2,0);
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
-		chicken(1, 50);
+		chicken(1, 50, p1.playerPosX, p1.playerPosY);
+		chicken(1, 50, p2.playerPosX, p2.playerPosY);
 		carController(80,45,70,1,"c1");
 		carController(80,45,70,2,"c2");
 		carController(80,45,70,3,"c3");
@@ -549,10 +619,10 @@ void draw_elements(){
 		carController(80,45,70,1,"c10");
 		glColor3ub(255,0,0);
 		//Center line debug
-		/*glBegin(GL_LINES);
+		glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
     		glVertex2f(windowW/2,0);
-		glEnd();*/
+		glEnd();
 
 		if((p1.score==10)||(p2.score==10)){
 			glutDestroyWindow(0);
