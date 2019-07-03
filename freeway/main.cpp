@@ -605,7 +605,8 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
-		chicken(1, 50, p1.playerPosX, p1.playerPosY);
+		//chicken(1, 50, p1.playerPosX, p1.playerPosY);
+		chicken(1,50,p1.playerPosX, 280);
 		chicken(1, 50, p2.playerPosX, p2.playerPosY);
 		carController(80,45,70,1,"c1");
 		carController(80,45,70,2,"c2");
