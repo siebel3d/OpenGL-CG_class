@@ -28,8 +28,7 @@ struct Player{
 	int score;
 	int playerPosX;
 	int playerPosY = windowH/2+170;
-	int sizeX;
-	int sizeY;
+	int size=50;
 	int laneFlag;
 	int r;
 	int g;
@@ -63,6 +62,10 @@ int legRotR = -15;
 
 //Chicken movement
 float chickenSpeed = 1.5;
+
+//Car
+int carSizeX=80;
+int carSizeY=45;
 
 //Variables for game scale
 float scaleTV = 1;
@@ -582,9 +585,17 @@ void updateChicken(){
 		p1.score++;
 	}
 
+	if((p1.playerPosX+350 == c1.posX+c1.sizeX)&&(p1.playerPosY < c1.posY+(c1.sizeY/2))&&(p1.playerPosY > c1.posY-(c1.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
 	if(p2.playerPosY==-windowH/2-170){
 		p2.playerPosY=windowH/2+170;
 		p2.score++;
+	}
+
+	if(p2.playerPosX-300 == c1.posX+c1.sizeX){
+		p2.playerPosY=windowH/2+170;
 	}
 }
 
@@ -605,19 +616,18 @@ void draw_elements(){
 		glScalef(scaleTV,-scaleTV,scaleTV);
 		map(80,70,10,22,5,-5,-6);
 		screenText();
-		//chicken(1, 50, p1.playerPosX, p1.playerPosY);
-		chicken(1,50,p1.playerPosX, 280);
-		chicken(1, 50, p2.playerPosX, p2.playerPosY);
-		carController(80,45,70,1,"c1");
-		carController(80,45,70,2,"c2");
-		carController(80,45,70,3,"c3");
-		carController(80,45,70,4,"c4");
-		carController(80,45,70,5,"c5");
-		carController(80,45,70,5,"c6");
-		carController(80,45,70,4,"c7");
-		carController(80,45,70,3,"c8");
-		carController(80,45,70,2,"c9");
-		carController(80,45,70,1,"c10");
+		chicken(1, p1.size, p1.playerPosX, p1.playerPosY);
+		chicken(1, p2.size, p2.playerPosX, p2.playerPosY);
+		carController(carSizeX,carSizeY,70,1,"c1");
+		carController(carSizeX,carSizeY,70,2,"c2");
+		carController(carSizeX,carSizeY,70,3,"c3");
+		carController(carSizeX,carSizeY,70,4,"c4");
+		carController(carSizeX,carSizeY,70,5,"c5");
+		carController(carSizeX,carSizeY,70,5,"c6");
+		carController(carSizeX,carSizeY,70,4,"c7");
+		carController(carSizeX,carSizeY,70,3,"c8");
+		carController(carSizeX,carSizeY,70,2,"c9");
+		carController(carSizeX,carSizeY,70,1,"c10");
 		glColor3ub(255,0,0);
 		//Center line debug
 		glBegin(GL_LINES);
