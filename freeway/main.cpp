@@ -27,7 +27,9 @@ struct Car{
 struct Player{
 	int score;
 	int playerPosX;
+	int offsetX;
 	int playerPosY = windowH/2+170;
+	int offsetY;
 	int size=50;
 	int laneFlag;
 	int r;
@@ -61,7 +63,7 @@ int legRotL = 15;
 int legRotR = -15;
 
 //Chicken movement
-float chickenSpeed = 1.5;
+float chickenSpeed = 1.5; 
 
 //Car
 int carSizeX=80;
@@ -270,13 +272,13 @@ void carComplete(int sizeX, int sizeY, int r, int g, int b){
 		carParts(sizeX/8,sizeY/15,-27,25,20,20,20);
 		carParts(sizeX/8,sizeY/15,-27,-25,20,20,20);
 		//Collision Debug
-		glColor3ub(255,0,0);
+		/*glColor3ub(255,0,0);
 		glBegin(GL_QUADS);
 			glVertex2f(-(sizeX/2), -(sizeY/2));
 			glVertex2f(-(sizeX/2), sizeY/2);
 			glVertex2f(sizeX/2+sizeX/8, sizeY/2);
 			glVertex2f(sizeX/2+sizeX/8, -(sizeY/2));
-		glEnd();
+		glEnd();*/
 
 
 	glPopMatrix();
@@ -495,13 +497,13 @@ void chicken(int scale, int size, float movX, float movY){
 	chickenLegs(size,legRotR, 5);
 
 	//Chicken Collision Debug
-	glColor3ub(255,0,0);
+	/*glColor3ub(255,0,0);
 	glBegin(GL_QUADS);
 		glVertex2f(-size/2, -size/1.7);
 		glVertex2f(-size/2, size/1.7);
 		glVertex2f(size/2, size/1.7);
 		glVertex2f(size/2, -size/1.7);
-	glEnd();
+	glEnd();*/
 
 	glPopMatrix();
 }
@@ -580,12 +582,77 @@ void updateCars(){
 }
 
 void updateChicken(){
+	p1.offsetX = 350;
+	p1.offsetY = 220;
+	p2.offsetX = 300;
+	p2.offsetY = 220;
+
 	if(p1.playerPosY==-windowH/2-170){
 		p1.playerPosY=windowH/2+170;
 		p1.score++;
 	}
+	
+	//printf("\nCar 1 Y: %i", c1.posY);
+	//printf("\nCar 1 X: %i", c1.posX);
+	//printf("\nCar 2 Y: %i", c2.posY);
+	//printf("\nCar 2 X: %i", c2.posX);
+	//printf("\nCar 3 Y: %i", c3.posY);
+	//printf("\nCar 3 X: %i", c3.posX);
+	//printf("\nCar 4 Y: %i", c4.posY);
+	//printf("\nCar 4 X: %i", c4.posX);
+	//printf("\nCar 5 Y: %i", c5.posY);
+	//printf("\nCar 5 X: %i", c5.posX);
+	//printf("\nCar 6 Y: %i", c6.posY);
+	//printf("\nCar 6 X: %i", c6.posX);
+	//printf("\nCar 7 Y: %i", c7.posY);
+	//printf("\nCar 7 X: %i", c7.posX);
+	//printf("\nCar 8 Y: %i", c8.posY);
+	//printf("\nCar 8 X: %i", c8.posX);
+	//printf("\nCar 9 Y: %i", c9.posY);
+	//printf("\nCar 9 X: %i", c9.posX);
+	//printf("\nCar 10 Y: %i", c10.posY);
+	//printf("\nCar 10 X: %i", c10.posX);
+	//printf("\nChicken  Y: %i", p1.playerPosY);
+	//printf("\nChicken  X: %i", p1.playerPosX);
+	
+	//Player 1 collision
+	if((p1.playerPosX+p1.offsetX <= c1.posX+c1.sizeX)&&(p1.playerPosX+p1.offsetX >= c1.posX-c1.sizeX)&&(p1.playerPosY-p1.offsetY <= c1.posY+(c1.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c1.posY-(c1.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
 
-	if((p1.playerPosX+350 == c1.posX+c1.sizeX)&&(p1.playerPosY < c1.posY+(c1.sizeY/2))&&(p1.playerPosY > c1.posY-(c1.sizeY/2))){
+	if((p1.playerPosX+p1.offsetX <= c2.posX+c2.sizeX/2)&&(p1.playerPosX+p1.offsetX >= c2.posX-c2.sizeX/2)&&(p1.playerPosY-p1.offsetY <= c2.posY+(c2.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c2.posY-(c2.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX+p1.offsetX == c3.posX+c3.sizeX)&&(p1.playerPosY-p1.offsetY <= c3.posY+(c3.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c3.posY-(c3.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX+p1.offsetX == c4.posX+c4.sizeX)&&(p1.playerPosY-p1.offsetY <= c4.posY+(c4.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c4.posY-(c4.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX+p1.offsetX == c5.posX+c5.sizeX)&&(p1.playerPosY-p1.offsetY <= c5.posY+(c5.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c5.posY-(c5.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX-p1.offsetX == c6.posX+c6.sizeX)&&(p1.playerPosY+p1.offsetY <= c6.posY+(c6.sizeY/2))&&(p1.playerPosY+p1.offsetY >= c6.posY-(c6.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX-p1.offsetX == c7.posX+c7.sizeX)&&(p1.playerPosY+p1.offsetY <= c7.posY+(c7.sizeY/2))&&(p1.playerPosY+p1.offsetY >= c7.posY-(c7.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX-p1.offsetX == c8.posX+c8.sizeX)&&(p1.playerPosY-p1.offsetY <= c8.posY+(c8.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c8.posY-(c8.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX-p1.offsetX == c9.posX+c9.sizeX)&&(p1.playerPosY-p1.offsetY <= c9.posY+(c9.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c9.posY-(c9.sizeY/2))){
+		p1.playerPosY=windowH/2+170;
+	}
+
+	if((p1.playerPosX-p1.offsetX == c10.posX+c10.sizeX)&&(p1.playerPosY-p1.offsetY <= c10.posY+(c10.sizeY/2))&&(p1.playerPosY-p1.offsetY >= c10.posY-(c10.sizeY/2))){
 		p1.playerPosY=windowH/2+170;
 	}
 
@@ -630,10 +697,10 @@ void draw_elements(){
 		carController(carSizeX,carSizeY,70,1,"c10");
 		glColor3ub(255,0,0);
 		//Center line debug
-		glBegin(GL_LINES);
+		/*glBegin(GL_LINES);
     		glVertex2f(-windowW/2,0);
     		glVertex2f(windowW/2,0);
-		glEnd();
+		glEnd();*/
 
 		if((p1.score==10)||(p2.score==10)){
 			glutDestroyWindow(0);
